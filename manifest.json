@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Gantt Pro - Project Timeline Manager",
+    "name": "Gantto - Project Timeline Manager",
     "version": "2.1.0",
     "description": "Professional Gantt chart extension with intelligent features: Progress Velocity Tracker, Smart Task Suggestions, advanced filtering, export/import, and beautiful dark theme for effective project management.",
     "author": "Karthikeyan T <tkarthikeyan@gmail.com>",
@@ -11,7 +11,7 @@
         "128": "icons/icon128.png"
     },
     "action": {
-        "default_title": "Open Gantt Pro - Project Timeline Manager"
+        "default_title": "Open Gantto - Project Timeline Manager"
     },
     "background": {
         "service_worker": "background.js"

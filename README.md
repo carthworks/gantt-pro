@@ -1,8 +1,8 @@
-# Gantt Pro - Professional Project Timeline Manager
+# Gantto - Professional Project Timeline Manager
 
 A premium Chrome extension for creating and managing Gantt charts with advanced features including project/task management, date filtering, and print capabilities.
 
-<!-- ![Gantt Pro](icons/icon128.png) -->
+<!-- ![Gantto](icons/icon128.png) -->
 ![GanttPro_screenShot](image.png)
 
 ## ✨ Features
@@ -59,7 +59,7 @@ A premium Chrome extension for creating and managing Gantt charts with advanced 
 
 ### Getting Started
 
-1. **Click the Extension Icon** in your Chrome toolbar to open Gantt Pro
+1. **Click the Extension Icon** in your Chrome toolbar to open Gantto
 
 2. **Add Your First Project**:
    - Click the "Add Project" button in the sidebar
@@ -234,4 +234,4 @@ For issues, questions, or suggestions, please create an issue in the repository.
 
 **Made with ❤️ for project managers and developers**
 
-Enjoy using Gantt Pro! 🎉
+Enjoy using Gantto! 🎉

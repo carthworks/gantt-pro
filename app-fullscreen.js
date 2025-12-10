@@ -1,4 +1,4 @@
-// ===== Enhanced Gantt Pro Application =====
+// ===== Enhanced Gantto Application =====
 class GanttProApp {
     constructor() {
         this.projects = [];

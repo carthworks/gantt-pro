@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gantt Pro - Project Timeline Manager</title>
+  <title>Gantto - Project Timeline Manager</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
   <div class="app-container">
     <!-- Header -->
@@ -16,25 +18,25 @@
       <div class="header-left">
         <div class="logo">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="3" y="4" width="4" height="16" rx="1" fill="url(#gradient1)"/>
-            <rect x="10" y="8" width="4" height="12" rx="1" fill="url(#gradient2)"/>
-            <rect x="17" y="6" width="4" height="14" rx="1" fill="url(#gradient3)"/>
+            <rect x="3" y="4" width="4" height="16" rx="1" fill="url(#gradient1)" />
+            <rect x="10" y="8" width="4" height="12" rx="1" fill="url(#gradient2)" />
+            <rect x="17" y="6" width="4" height="14" rx="1" fill="url(#gradient3)" />
             <defs>
               <linearGradient id="gradient1" x1="5" y1="4" x2="5" y2="20" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#667eea"/>
-                <stop offset="1" stop-color="#764ba2"/>
+                <stop stop-color="#667eea" />
+                <stop offset="1" stop-color="#764ba2" />
               </linearGradient>
               <linearGradient id="gradient2" x1="12" y1="8" x2="12" y2="20" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#f093fb"/>
-                <stop offset="1" stop-color="#f5576c"/>
+                <stop stop-color="#f093fb" />
+                <stop offset="1" stop-color="#f5576c" />
               </linearGradient>
               <linearGradient id="gradient3" x1="19" y1="6" x2="19" y2="20" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#4facfe"/>
-                <stop offset="1" stop-color="#00f2fe"/>
+                <stop stop-color="#4facfe" />
+                <stop offset="1" stop-color="#00f2fe" />
               </linearGradient>
             </defs>
           </svg>
-          <h1>Gantt Pro</h1>
+          <h1>Gantto</h1>
         </div>
       </div>
       <div class="header-right">
@@ -74,7 +76,7 @@
             Add Project
           </button>
         </div>
-        
+
         <div class="projects-list" id="projectsList">
           <!-- Projects will be dynamically added here -->
         </div>
@@ -99,7 +101,7 @@
               </tbody>
             </table>
           </div>
-          
+
           <div class="gantt-timeline-wrapper">
             <div class="gantt-timeline-header" id="timelineHeader">
               <!-- Timeline header will be dynamically generated -->
@@ -130,24 +132,24 @@
           <input type="hidden" id="projectId">
           <input type="hidden" id="isTask">
           <input type="hidden" id="parentProjectId">
-          
+
           <div class="form-group">
             <label for="projectName">Name</label>
             <input type="text" id="projectName" class="form-input" required placeholder="Enter project or task name">
           </div>
-          
+
           <div class="form-row">
             <div class="form-group">
               <label for="projectStart">Start Date</label>
               <input type="date" id="projectStart" class="form-input" required>
             </div>
-            
+
             <div class="form-group">
               <label for="projectDuration">Duration (days)</label>
               <input type="number" id="projectDuration" class="form-input" min="1" required placeholder="1">
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="projectProgress">Progress (%)</label>
             <div class="progress-input-wrapper">
@@ -155,7 +157,7 @@
               <span class="progress-value" id="progressValue">0%</span>
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="projectColor">Color</label>
             <div class="color-picker">
@@ -170,7 +172,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="modal-footer">
             <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
             <button type="submit" class="btn-primary">Save</button>
@@ -182,4 +184,5 @@
 
   <script src="app.js"></script>
 </body>
+
 </html>

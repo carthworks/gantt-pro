@@ -1,4 +1,4 @@
-// Background service worker for Gantt Pro
+// Background service worker for Gantto
 chrome.action.onClicked.addListener((tab) => {
     chrome.tabs.create({
         url: chrome.runtime.getURL('index.html')

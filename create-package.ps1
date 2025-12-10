@@ -1,9 +1,9 @@
-# Gantt Pro - Chrome Web Store Package Creator
+# Gantto - Chrome Web Store Package Creator
 # Author: Karthikeyan T
 # Email: tkarthikeyan@gmail.com
 
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Gantt Pro - Package Creator v2.1.0  " -ForegroundColor Cyan
+Write-Host "  Gantto - Package Creator v2.1.0  " -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -107,7 +107,7 @@ Write-Host "  Files: $($filesToInclude.Count)" -ForegroundColor White
 Write-Host ""
 
 Write-Host "Extension Information:" -ForegroundColor Cyan
-Write-Host "  Name: Gantt Pro - Project Timeline Manager" -ForegroundColor White
+Write-Host "  Name: Gantto - Project Timeline Manager" -ForegroundColor White
 Write-Host "  Version: 2.1.0" -ForegroundColor White
 Write-Host "  Author: Karthikeyan T" -ForegroundColor White
 Write-Host "  Email: tkarthikeyan@gmail.com" -ForegroundColor White
