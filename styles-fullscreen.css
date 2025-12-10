@@ -2189,9 +2189,150 @@ body.fullscreen-mode {
   font-weight: 600;
 }
 
+/* Developer Section Styles */
+.developer-info {
+  margin-top: 16px;
+}
+
+.developer-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all var(--transition-normal);
+}
+
+.developer-card:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+}
+
+.developer-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.developer-avatar {
+  width: 64px;
+  height: 64px;
+  background: var(--primary-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.developer-avatar svg {
+  color: white;
+}
+
+.developer-details h4 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.developer-title {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.developer-bio {
+  margin-bottom: 20px;
+}
+
+.developer-bio p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.developer-contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all var(--transition-normal);
+  border: 1px solid transparent;
+}
+
+.contact-link:hover {
+  background: var(--bg-hover);
+  border-color: #667eea;
+  transform: translateX(4px);
+}
+
+.contact-link svg {
+  flex-shrink: 0;
+  color: #667eea;
+}
+
+.contact-link span {
+  flex: 1;
+}
+
+.developer-footer {
+  text-align: center;
+}
+
+.developer-footer p {
+  margin: 8px 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.developer-footer p:first-child {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.version-info {
+  font-size: 12px !important;
+  color: var(--text-tertiary) !important;
+  opacity: 0.7;
+}
+
 /* Responsive adjustments for guide modal */
 @media (max-width: 768px) {
   .guide-features {
     grid-template-columns: 1fr;
+  }
+
+  .developer-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .developer-contacts {
+    gap: 8px;
+  }
+
+  .contact-link {
+    font-size: 13px;
+    padding: 8px 10px;
   }
 }
