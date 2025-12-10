@@ -309,6 +309,16 @@ class GanttProApp {
             document.getElementById('shareLinkContainer').style.display = 'none';
         });
 
+        // Help/Guide button
+        document.getElementById('helpBtn').addEventListener('click', () => {
+            document.getElementById('guideModal').classList.add('active');
+        });
+
+        document.getElementById('closeGuideModal').addEventListener('click', () => {
+            document.getElementById('guideModal').classList.remove('active');
+        });
+
+
         // Share functionality
         document.getElementById('copyJSONBtn').addEventListener('click', () => {
             this.copyJSONToClipboard();

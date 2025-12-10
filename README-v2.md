@@ -1,4 +1,4 @@
-# 🎯 Gantt Pro v2.0 - Professional Project Timeline Manager
+# 🎯 Gantto v2.0 - Professional Project Timeline Manager
 
 **A premium fullscreen Chrome extension for advanced Gantt chart creation and project management**
 
@@ -60,7 +60,7 @@ The extension now opens in a full browser tab with a professional layout:
 3. **Enable** "Developer mode" (toggle in top-right)
 4. **Click** "Load unpacked"
 5. **Select** the `gantt-chrart-pro` folder
-6. **Click** the Gantt Pro icon in your toolbar
+6. **Click** the Gantto icon in your toolbar
 
 The extension will open in a **new fullscreen tab**!
 
@@ -434,7 +434,7 @@ Built with:
 
 **Made with ❤️ for project managers and developers**
 
-**Enjoy Gantt Pro v2.0!** 🎉🚀
+**Enjoy Gantto v2.0!** 🎉🚀
 
 ---
 

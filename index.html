@@ -157,6 +157,14 @@
                             <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"></path>
                         </svg>
                     </button>
+                    <button class="btn-icon btn-help" id="helpBtn" title="How to Use">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </header>
@@ -623,6 +631,230 @@
                     <div class="shortcut-item">
                         <kbd>?</kbd>
                         <span>Show Shortcuts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Guide Modal -->
+    <div class="modal" id="guideModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>📚 How to Use Gantto</h3>
+                <button class="modal-close" id="closeGuideModal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body guide-content">
+                <!-- Getting Started -->
+                <div class="guide-section">
+                    <div class="guide-section-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <h4>Getting Started</h4>
+                    </div>
+                    <div class="guide-steps">
+                        <div class="guide-step">
+                            <span class="step-number">1</span>
+                            <div class="step-content">
+                                <h5>Create Your First Project</h5>
+                                <p>Click the <strong>"Add Project"</strong> button in the sidebar to create a new
+                                    project. Fill in the project name, start date, duration, and other details.</p>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <span class="step-number">2</span>
+                            <div class="step-content">
+                                <h5>Add Tasks to Projects</h5>
+                                <p>Click the <strong>"+"</strong> icon next to any project to add tasks. Tasks help you
+                                    break down projects into manageable pieces.</p>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <span class="step-number">3</span>
+                            <div class="step-content">
+                                <h5>Track Progress</h5>
+                                <p>Update task progress using the slider when editing. The Gantt chart will visually
+                                    show your progress with colored bars.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Features -->
+                <div class="guide-section">
+                    <div class="guide-section-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                        <h4>Key Features</h4>
+                    </div>
+                    <div class="guide-features">
+                        <div class="guide-feature">
+                            <div class="feature-icon"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white"
+                                    stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <path d="m21 21-4.35-4.35"></path>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <h5>Search & Filter</h5>
+                                <p>Use the search bar to find projects and tasks. Apply filters to view specific
+                                    progress ranges or statuses.</p>
+                            </div>
+                        </div>
+                        <div class="guide-feature">
+                            <div class="feature-icon"
+                                style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white"
+                                    stroke-width="2">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <h5>Progress Velocity</h5>
+                                <p>Track your team's completion rate and get estimated completion dates based on current
+                                    velocity.</p>
+                            </div>
+                        </div>
+                        <div class="guide-feature">
+                            <div class="feature-icon"
+                                style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white"
+                                    stroke-width="2">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5"></path>
+                                    <path d="M2 12l10 5 10-5"></path>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <h5>Smart Suggestions</h5>
+                                <p>Get AI-powered recommendations on what to work on today based on deadlines,
+                                    dependencies, and priorities.</p>
+                            </div>
+                        </div>
+                        <div class="guide-feature">
+                            <div class="feature-icon"
+                                style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white"
+                                    stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <h5>Export & Share</h5>
+                                <p>Export your data as JSON or CSV. Share your Gantt chart with team members using
+                                    shareable links.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Keyboard Shortcuts -->
+                <div class="guide-section">
+                    <div class="guide-section-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                            <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"></path>
+                        </svg>
+                        <h4>Keyboard Shortcuts</h4>
+                    </div>
+                    <div class="guide-shortcuts">
+                        <div class="shortcut-row">
+                            <div class="shortcut-keys">
+                                <kbd>Ctrl</kbd> + <kbd>N</kbd>
+                            </div>
+                            <div class="shortcut-desc">Create new project</div>
+                        </div>
+                        <div class="shortcut-row">
+                            <div class="shortcut-keys">
+                                <kbd>Ctrl</kbd> + <kbd>F</kbd>
+                            </div>
+                            <div class="shortcut-desc">Focus search</div>
+                        </div>
+                        <div class="shortcut-row">
+                            <div class="shortcut-keys">
+                                <kbd>Ctrl</kbd> + <kbd>E</kbd>
+                            </div>
+                            <div class="shortcut-desc">Export data</div>
+                        </div>
+                        <div class="shortcut-row">
+                            <div class="shortcut-keys">
+                                <kbd>Ctrl</kbd> + <kbd>+</kbd> / <kbd>-</kbd>
+                            </div>
+                            <div class="shortcut-desc">Zoom in/out</div>
+                        </div>
+                        <div class="shortcut-row">
+                            <div class="shortcut-keys">
+                                <kbd>?</kbd>
+                            </div>
+                            <div class="shortcut-desc">Show keyboard shortcuts</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tips & Tricks -->
+                <div class="guide-section">
+                    <div class="guide-section-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        <h4>Tips & Tricks</h4>
+                    </div>
+                    <div class="guide-tips">
+                        <div class="tip-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                <path d="M2 17l10 5 10-5"></path>
+                            </svg>
+                            <p><strong>Dependencies:</strong> Set task dependencies to automatically visualize project
+                                flow and identify blocking tasks.</p>
+                        </div>
+                        <div class="tip-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <p><strong>View Modes:</strong> Switch between Day, Week, Month, and Year views to see
+                                different time scales of your project.</p>
+                        </div>
+                        <div class="tip-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            <p><strong>Color Coding:</strong> Use different colors for projects to visually organize and
+                                categorize your work.</p>
+                        </div>
+                        <div class="tip-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="9 11 12 14 22 4"></polyline>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                            <p><strong>Regular Updates:</strong> Keep your progress updated regularly to get accurate
+                                velocity tracking and completion estimates.</p>
+                        </div>
                     </div>
                 </div>
             </div>
