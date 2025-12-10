@@ -32,7 +32,8 @@ foreach ($file in $filesToInclude) {
     $filePath = Join-Path $sourceDir $file
     if (Test-Path $filePath) {
         Write-Host "  ✓ $file" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "  ✗ $file (MISSING!)" -ForegroundColor Red
         $allFilesExist = $false
     }
@@ -71,7 +72,8 @@ foreach ($file in $filesToInclude) {
     $sourcePath = Join-Path $sourceDir $file
     if ($file.StartsWith("icons\")) {
         $destPath = Join-Path $tempIconsDir (Split-Path $file -Leaf)
-    } else {
+    }
+    else {
         $destPath = Join-Path $tempDir (Split-Path $file -Leaf)
     }
     Copy-Item $sourcePath $destPath

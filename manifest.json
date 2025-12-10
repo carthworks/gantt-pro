@@ -4,7 +4,7 @@
     "version": "2.1.0",
     "description": "Professional Gantt chart extension with intelligent features: Progress Velocity Tracker, Smart Task Suggestions, advanced filtering, export/import, and beautiful dark theme for effective project management.",
     "author": "Karthikeyan T <tkarthikeyan@gmail.com>",
-    "homepage_url": "https://github.com/arthworks/gantt-pro",
+    "homepage_url": "https://github.com/carthworks/gantt-pro",
     "icons": {
         "16": "icons/icon16.png",
         "48": "icons/icon48.png",
