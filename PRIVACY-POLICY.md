@@ -1,4 +1,4 @@
-# Privacy Policy for Gantt Pro
+# Privacy Policy for Gantto
 
 **Last Updated**: December 10, 2025  
 **Developer**: Karthikeyan T  
@@ -6,7 +6,7 @@
 
 ## Overview
 
-Gantt Pro ("the Extension") is committed to protecting your privacy. This privacy policy explains how we handle your information.
+Gantto ("the Extension") is committed to protecting your privacy. This privacy policy explains how we handle your information.
 
 ## Data Collection
 
@@ -81,7 +81,7 @@ To delete all data stored by the Extension:
 
 2. **Option 2**: Clear Extension data
    - Go to `chrome://settings/content/all`
-   - Find "Gantt Pro"
+   - Find "Gantto"
    - Click "Clear data"
 
 ## Contact
@@ -89,7 +89,7 @@ To delete all data stored by the Extension:
 If you have questions about this privacy policy or the Extension:
 
 **Email**: tkarthikeyan@gmail.com  
-**GitHub**: https://github.com/karthikeyan-t/gantt-pro
+**GitHub**: https://github.com/carthworks/gantt-pro
 
 ## Your Rights
 
@@ -107,7 +107,7 @@ This Extension complies with:
 
 ## Summary
 
-**In simple terms**: Gantt Pro stores your project data locally in your browser. We don't collect, transmit, or access your data. Your information never leaves your device.
+**In simple terms**: Gantto stores your project data locally in your browser. We don't collect, transmit, or access your data. Your information never leaves your device.
 
 ---
 
