@@ -2,7 +2,8 @@
 
 A premium Chrome extension for creating and managing Gantt charts with advanced features including project/task management, date filtering, and print capabilities.
 
-![Gantt Pro](icons/icon128.png)
+<!-- ![Gantt Pro](icons/icon128.png) -->
+![GanttPro_screenShot](GanttPro_screenShot.png)
 
 ## ✨ Features
 
