@@ -132,6 +132,16 @@
                             <line x1="12" y1="3" x2="12" y2="15"></line>
                         </svg>
                     </button>
+                    <button class="btn-icon" id="shareBtn" title="Share Data">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="18" cy="5" r="3"></circle>
+                            <circle cx="6" cy="12" r="3"></circle>
+                            <circle cx="18" cy="19" r="3"></circle>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                        </svg>
+                    </button>
                     <button class="btn-icon" id="printBtn" title="Print Chart">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -514,6 +524,52 @@
                         <h4>CSV</h4>
                         <p>Export as CSV file</p>
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Share Your Gantt Chart</h3>
+                <button class="modal-close" id="closeShareModal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="share-options">
+                    <button class="share-option" id="copyJSONBtn">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <h4>Copy JSON</h4>
+                        <p>Copy data to clipboard</p>
+                    </button>
+                    <button class="share-option" id="generateLinkBtn">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                        <h4>Generate Link</h4>
+                        <p>Create shareable data URL</p>
+                    </button>
+                </div>
+                <div class="share-link-container" id="shareLinkContainer" style="display: none;">
+                    <label>Shareable Link (copy this):</label>
+                    <div class="share-link-box">
+                        <input type="text" id="shareLink" class="form-input" readonly>
+                        <button class="btn-primary-sm" id="copyLinkBtn">Copy</button>
+                    </div>
+                    <small class="form-hint">Note: This link contains your data encoded in the URL. Share it with others
+                        to let them import your projects.</small>
                 </div>
             </div>
         </div>

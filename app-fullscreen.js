@@ -20,6 +20,7 @@ class GanttProApp {
     }
 
     init() {
+        this.loadDataFromURL(); // Check for shared data in URL
         this.loadData();
         this.setupEventListeners();
         this.setDefaultDateRange();
@@ -277,6 +278,10 @@ class GanttProApp {
             document.getElementById('shortcutsModal').classList.add('active');
         });
 
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            document.getElementById('shareModal').classList.add('active');
+        });
+
         // Add project button
         document.getElementById('addProjectBtn').addEventListener('click', () => {
             this.openModal();
@@ -297,6 +302,24 @@ class GanttProApp {
 
         document.getElementById('closeShortcutsModal').addEventListener('click', () => {
             document.getElementById('shortcutsModal').classList.remove('active');
+        });
+
+        document.getElementById('closeShareModal').addEventListener('click', () => {
+            document.getElementById('shareModal').classList.remove('active');
+            document.getElementById('shareLinkContainer').style.display = 'none';
+        });
+
+        // Share functionality
+        document.getElementById('copyJSONBtn').addEventListener('click', () => {
+            this.copyJSONToClipboard();
+        });
+
+        document.getElementById('generateLinkBtn').addEventListener('click', () => {
+            this.generateShareLink();
+        });
+
+        document.getElementById('copyLinkBtn').addEventListener('click', () => {
+            this.copyShareLink();
         });
 
         // Click outside modals to close
@@ -1440,6 +1463,73 @@ class GanttProApp {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    // ===== SHARE FUNCTIONALITY =====
+
+    copyJSONToClipboard() {
+        const jsonData = JSON.stringify(this.projects, null, 2);
+        navigator.clipboard.writeText(jsonData).then(() => {
+            this.showNotification('JSON data copied to clipboard!', 'success', 'Share');
+            document.getElementById('shareModal').classList.remove('active');
+        }).catch(err => {
+            this.showNotification('Failed to copy to clipboard', 'error', 'Share');
+            console.error('Copy failed:', err);
+        });
+    }
+
+    generateShareLink() {
+        try {
+            const jsonData = JSON.stringify(this.projects);
+            const encodedData = btoa(encodeURIComponent(jsonData));
+            const baseUrl = window.location.href.split('?')[0];
+            const shareUrl = `${baseUrl}?data=${encodedData}`;
+
+            document.getElementById('shareLink').value = shareUrl;
+            document.getElementById('shareLinkContainer').style.display = 'block';
+
+            this.showNotification('Share link generated!', 'success', 'Share');
+        } catch (err) {
+            this.showNotification('Failed to generate link', 'error', 'Share');
+            console.error('Generate link failed:', err);
+        }
+    }
+
+    copyShareLink() {
+        const linkInput = document.getElementById('shareLink');
+        linkInput.select();
+        navigator.clipboard.writeText(linkInput.value).then(() => {
+            this.showNotification('Share link copied to clipboard!', 'success', 'Share');
+        }).catch(err => {
+            this.showNotification('Failed to copy link', 'error', 'Share');
+            console.error('Copy link failed:', err);
+        });
+    }
+
+    loadDataFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedData = urlParams.get('data');
+
+        if (encodedData) {
+            try {
+                const jsonData = decodeURIComponent(atob(encodedData));
+                const importedProjects = JSON.parse(jsonData);
+
+                if (confirm('This link contains shared Gantt chart data. Do you want to import it?')) {
+                    this.projects = importedProjects;
+                    this.saveData();
+                    this.render();
+                    this.updateStats();
+                    this.showNotification('Shared data imported successfully!', 'success', 'Import');
+
+                    // Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            } catch (err) {
+                this.showNotification('Failed to load shared data', 'error', 'Import');
+                console.error('Load from URL failed:', err);
+            }
+        }
     }
 }
 

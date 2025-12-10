@@ -1829,4 +1829,75 @@ body.fullscreen-mode {
 
 .mb-3 {
   margin-bottom: 24px;
+}/* ===== Share Modal ===== */
+.share-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.share-option {
+    padding: 24px;
+    background: var(--bg-tertiary);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: center;
+}
+
+.share-option:hover {
+    background: var(--bg-hover);
+    border-color: #667eea;
+    transform: translateY(-4px);
+}
+
+.share-option svg {
+    margin-bottom: 12px;
+    color: var(--text-secondary);
+}
+
+.share-option h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.share-option p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.share-link-container {
+    padding: 16px;
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.share-link-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.share-link-box {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.share-link-box .form-input {
+    flex: 1;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+}
+
+.share-link-box .btn-primary-sm {
+    flex-shrink: 0;
 }
