@@ -3473,3 +3473,130 @@ body.fullscreen-mode {
     font-weight: 600;
     font-size: 16px;
 }
+/* ===== About Section Styles ===== */
+.about-card {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.about-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.about-icon {
+    font-size: 48px;
+    flex-shrink: 0;
+}
+
+.about-header h4 {
+    font-size: 18px;
+    margin: 0 0 4px 0;
+    color: var(--text-primary);
+}
+
+.version-info {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.about-content {
+    padding: 20px;
+}
+
+.about-content>p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0 0 20px 0;
+    line-height: 1.6;
+}
+
+.author-info {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    border-left: 3px solid #667eea;
+}
+
+.author-info h5 {
+    font-size: 14px;
+    margin: 0 0 8px 0;
+    color: var(--text-primary);
+}
+
+.author-info p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 4px 0;
+}
+
+.author-email {
+    color: #667eea !important;
+}
+
+.features-summary {
+    margin-bottom: 20px;
+}
+
+.features-summary h5 {
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    color: var(--text-primary);
+}
+
+.features-summary ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+}
+
+.features-summary li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border-radius: 6px;
+    border-left: 2px solid #667eea;
+}
+
+.tech-stack {
+    padding: 16px;
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.tech-stack p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 6px 0;
+    line-height: 1.6;
+}
+
+.tech-stack strong {
+    color: var(--text-primary);
+}
+
+.about-footer {
+    padding: 16px 20px;
+    background: var(--bg-tertiary);
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.about-footer p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0;
+}

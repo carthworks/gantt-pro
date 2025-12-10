@@ -584,7 +584,17 @@ Enjoy using Gantto! 🎉
 
 ### 📝 Version History
 
-**v2.0** (Current)
+**v2.3** (Current - December 2025)
+- ✨ **Natural Language Task Creation**: Create tasks using plain English
+- ✨ **Smart Templates & Learning**: 6 built-in templates + custom templates + AI insights
+- ✨ **Critical Path Highlighting**: CPM algorithm to identify critical tasks
+- ✨ **Collapsible Sidebar Sections**: User-controlled section visibility
+- ✨ **Comprehensive Help Modal**: Interactive guide with tabs
+- ✨ **Enhanced Calendar**: Seamless month/year transitions
+- 🐛 Fixed duplicate modal issues
+- 🎨 Improved UI/UX across all features
+
+**v2.0**
 - ✨ Added task validation against project duration
 - ✨ Automatic project progress calculation from tasks
 - ✨ Header "Add Task" button with project selector
@@ -602,4 +612,20 @@ Enjoy using Gantto! 🎉
 
 ---
 
-© 2024 Karthikeyan T. All rights reserved.
+## 👨‍💻 Author
+
+**Karthikeyan T**
+- Email: tkarthikeyan@gmail.com
+- GitHub: [Your GitHub Profile]
+- LinkedIn: [Your LinkedIn Profile]
+
+### 🙏 Acknowledgments
+
+- Built with vanilla JavaScript for maximum performance
+- Inspired by professional project management tools
+- AI-assisted development for advanced features
+
+---
+
+© 2024-2025 Karthikeyan T. All rights reserved.
+
