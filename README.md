@@ -22,6 +22,9 @@ A premium Chrome extension for creating and managing Gantt charts with advanced 
 - **Glassmorphism Effects**: Modern UI with depth and visual hierarchy
 
 ### 🛠️ Advanced Features
+- **Natural Language Task Creation**: Create tasks using conversational language (e.g., "Design homepage from Jan 15 for 2 weeks, 50% done")
+- **Smart Templates & Learning**: Pre-built project templates and AI-powered insights from historical data
+- **Critical Path Highlighting**: Identify and highlight the longest sequence of dependent tasks using CPM algorithm
 - **Print Support**: Print-optimized Gantt charts for presentations
 - **Data Persistence**: Automatic saving using Chrome storage
 - **Real-time Updates**: Instant visual feedback on all changes
@@ -57,165 +60,336 @@ A premium Chrome extension for creating and managing Gantt charts with advanced 
 
 ## 📖 How to Use Gantto
 
-### Quick Start Guide
+<table>
+<tr>
+<td width="30%" valign="top">
 
-#### 1. Opening Gantto
-- Click the **Gantto extension icon** in your Chrome toolbar
-- The application opens in a new window with a professional dark interface
+### 📑 Quick Navigation
 
-#### 2. Creating Your First Project
+- [🚀 Getting Started](#-getting-started)
+- [📊 Projects](#-projects)
+- [✅ Tasks](#-tasks)
+- [🗣️ Natural Language](#-natural-language)
+- [📚 Templates](#-templates)
+- [📈 Timeline Views](#-timeline-views)
+- [🔍 Search & Filter](#-search--filter)
+- [📤 Export & Share](#-export--share)
+- [⌨️ Keyboard Shortcuts](#️-keyboard-shortcuts)
+- [💡 Pro Tips](#-pro-tips)
 
-**Step-by-Step:**
-1. Click the **"Add Project"** button in the left sidebar (purple button)
-2. Fill in the project details:
-   - **Name**: Enter your project name (e.g., "Website Redesign")
-   - **Start Date**: Select when the project begins
-   - **Duration**: Enter the number of days (e.g., 30)
-   - **Progress**: Set initial progress (0-100%) - *Note: This auto-calculates from tasks*
-   - **Color**: Choose a color to identify your project
-   - **Description**: Add optional project notes
-3. Click **"Save"** to create the project
+</td>
+<td width="70%" valign="top">
 
-#### 3. Adding Tasks to Projects
+### 🚀 Getting Started
 
-**Two Ways to Add Tasks:**
+#### Opening Gantto
+1. Click the **Gantto icon** in your Chrome toolbar
+2. Application opens in fullscreen mode
+3. You'll see a dark-themed professional interface
 
-**Method 1: From Sidebar (Recommended)**
-1. Find your project in the left sidebar
-2. Click on the project to expand it
-3. Click the **"Add Task"** button at the top of the task list
-4. Fill in task details and save
+#### First Time Setup
+- The app starts with an empty canvas
+- Click **"Add Project"** to create your first project
+- Or use **Templates** for quick start with pre-built projects
 
-**Method 2: From Header Button**
-1. Click the **"Add Task"** button in the sidebar header (below "Add Project")
-2. Select which project to add the task to from the dropdown
-3. Fill in task details:
-   - **Project**: Select the parent project
-   - **Name**: Enter task name
-   - **Start Date**: Must be within project date range
-   - **Duration**: Number of days (must fit within project)
-   - **Progress**: Set completion percentage (0-100%)
-   - **Color**: Choose task color
-   - **Description**: Add task notes
-4. Click **"Save"**
+---
 
-**Important Task Rules:**
-- ✅ Task start date must be after or equal to project start date
-- ✅ Task end date must be before or equal to project end date
-- ✅ All tasks combined must fit within the project duration
-- ✅ Project progress is automatically calculated from task progress
+### 📊 Projects
 
-#### 4. Editing Projects and Tasks
+#### Creating a Project
 
-1. **Edit Icon**: Click the pencil icon (✏️) next to any project or task
-2. **Modify Details**: Update any field in the modal
-3. **Save Changes**: Click "Save" to apply updates
+**Traditional Method:**
+1. Click **"Add Project"** button (purple button in sidebar)
+2. Fill in the form:
+   - **Name**: Project title
+   - **Start Date**: When project begins
+   - **Duration**: Total days for project
+   - **Color**: Visual identifier
+   - **Description**: Optional notes
+3. Click **"Save"**
 
-**Note**: When editing projects, the progress field is disabled because it's auto-calculated from tasks.
+**Using Natural Language:**
+1. Click **"Add Project"**
+2. Type: `"Website redesign from Jan 15 for 30 days"`
+3. Click **"Parse & Fill Form"**
+4. Review auto-filled fields
+5. Click **"Save"**
 
-#### 5. Deleting Items
+#### Editing Projects
+- Click the **pencil icon** (✏️) next to project name
+- Modify any field except progress (auto-calculated)
+- Save changes
 
-1. Click the **trash icon** (🗑️) next to any project or task
-2. Confirm the deletion in the popup
-3. The item is permanently removed
+#### Deleting Projects
+- Click **trash icon** (🗑️) next to project
+- Confirm deletion
+- ⚠️ **Warning**: Deletes all tasks within the project
 
-**Warning**: Deleting a project will also delete all its tasks!
+---
 
-#### 6. Using the Gantt Chart Timeline
+### ✅ Tasks
 
-**Understanding the Timeline:**
-- **Horizontal Bars**: Represent projects and tasks
-- **Bar Color**: Matches the project/task color
-- **Progress Fill**: Lighter shade shows completion percentage
-- **Today Marker**: Vertical line indicates current date
-- **Duration**: Bar width represents the time span
+#### Adding Tasks
 
-**Viewing Options:**
-- **Day View**: Shows individual days
-- **Week View**: Groups by weeks
-- **Month View**: Shows months
-- **Year View**: Annual overview
+**Method 1: From Project (Recommended)**
+1. Expand a project in the sidebar
+2. Click **"Add Task"** button
+3. Fill in task details
+4. Task automatically linked to project
 
-#### 7. Filtering and Searching
+**Method 2: From Header**
+1. Click **"Add Task"** in sidebar header
+2. Select parent project from dropdown
+3. Fill in details
+4. Save
 
-**Search Projects:**
-1. Use the search box at the top of the sidebar
-2. Type project or task name
-3. Results filter in real-time
+**Using Natural Language:**
+1. Click **"Add Task"**
+2. Type: `"Design mockups starting tomorrow for 5 days, 30% done"`
+3. Click **"Parse & Fill Form"**
+4. Review and save
 
-**Filter by Progress:**
-1. Click the filter icon in the sidebar
-2. Select progress ranges:
-   - Not Started (0%)
-   - In Progress (1-99%)
-   - Completed (100%)
-3. View is filtered instantly
+#### Task Rules
+✅ Start date must be within project dates  
+✅ End date must be within project dates  
+✅ All tasks must fit within project duration  
+✅ Progress updates automatically reflect in project
 
-**Date Range Filtering:**
-1. Use date pickers in the top-right header
+#### Managing Tasks
+- **Edit**: Click pencil icon
+- **Delete**: Click trash icon
+- **Progress**: Update anytime (0-100%)
+- **Dependencies**: Link tasks together
+
+---
+
+### 🗣️ Natural Language
+
+#### Quick Task Creation
+
+**Supported Formats:**
+
+| Format | Example |
+|--------|---------|
+| **Basic** | `Design homepage for 5 days` |
+| **With Date** | `Backend API from 2025-01-15 for 2 weeks` |
+| **With Progress** | `Testing phase for 3 days, 50% done` |
+| **Relative Dates** | `Marketing campaign starting tomorrow for 10 days` |
+| **Weekdays** | `Code review from next Monday for 2 days` |
+
+#### Date Formats
+- **Absolute**: `2025-01-15`, `01/15/2025`
+- **Relative**: `today`, `tomorrow`, `next week`
+- **Weekdays**: `next Monday`, `this Friday`
+- **Offset**: `in 3 days`, `in 2 weeks`
+
+#### Duration Formats
+- `for 5 days`
+- `for 2 weeks`
+- `duration: 10 days`
+
+#### Progress Formats
+- `50% done`
+- `30% complete`
+- `75% progress`
+
+---
+
+### 📚 Templates
+
+#### Using Built-in Templates
+
+1. Click **Templates** button (layers icon) in header
+2. Browse 6 professional templates:
+   - 💻 Web Development (53 days)
+   - 📢 Marketing Campaign (45 days)
+   - 🚀 Product Launch (76 days)
+   - ⚙️ Software Release (25 days)
+   - 🎉 Event Planning (38 days)
+   - ✍️ Content Creation (27 days)
+3. Click **"Use Template"**
+4. Project created with all tasks
+5. Customize as needed
+
+#### Creating Custom Templates
+
+1. Build your projects with tasks
+2. Open **Templates** modal
+3. Go to **"My Templates"** tab
+4. Click **"Save Current as Template"**
+5. Enter template name
+6. Template saved for reuse
+
+#### Learning Insights
+
+View AI-powered analytics:
+- **Task Duration Patterns**: Average time for similar tasks
+- **Completion Statistics**: Your success rate
+- **Duration Insights**: Project timing analysis
+- **Recommendations**: Personalized suggestions
+
+---
+
+### 📈 Timeline Views
+
+#### View Modes
+
+| Mode | Shows | Best For |
+|------|-------|----------|
+| **Day** | Individual days | Detailed planning |
+| **Week** | Weekly blocks | Sprint planning |
+| **Month** | Monthly overview | Long-term projects |
+| **Year** | Annual view | Strategic planning |
+
+#### Timeline Features
+- **Color-coded bars**: Match project/task colors
+- **Progress fill**: Lighter shade shows completion
+- **Today marker**: Vertical line for current date
+- **Hover details**: See info on hover
+
+#### Date Range Control
+1. Use date pickers in header
 2. Set **Start Date** and **End Date**
-3. Timeline shows only items in that range
+3. Timeline adjusts automatically
+4. Click **"Today"** to jump to current date
 
-#### 8. Viewing Project Statistics
+---
 
-The sidebar shows real-time stats:
-- **Projects**: Total number of projects
-- **Tasks**: Total number of tasks across all projects
-- **Avg Progress**: Average completion across all projects
+### 🔍 Search & Filter
 
-#### 9. Using Smart Features
+#### Search
+1. Use search box in sidebar
+2. Type project or task name
+3. Real-time filtering
+4. Click **X** to clear
 
-**Progress Velocity:**
-- Shows how fast you're completing tasks
-- Displays days per percentage point
-- Helps estimate completion time
+#### Filter by Progress
+1. Click **filter icon** in sidebar
+2. Select categories:
+   - ⚪ Not Started (0%)
+   - 🔵 In Progress (1-99%)
+   - ✅ Completed (100%)
+3. Apply filters
+4. Clear to see all
 
-**Smart Suggestions:**
-- AI-powered task recommendations
-- Highlights urgent tasks
-- Shows overdue items
-- Suggests next actions
+#### Expand/Collapse
+- **Expand All**: Show all tasks
+- **Collapse All**: Hide all tasks
+- **Individual**: Click project to toggle
 
-#### 10. Exporting and Sharing
+---
 
-**Export Options:**
-1. Click the **"Export"** button in the header
-2. Choose format:
-   - **JSON**: Full data export
-   - **CSV**: Spreadsheet format
+### 📤 Export & Share
 
-**Share Your Chart:**
-1. Click the **"Share"** button
-2. Options:
-   - **Copy JSON**: Share raw data
-   - **Generate Link**: Create shareable URL
+#### Export Data
 
-**Print:**
-1. Click the **Print** icon (🖨️)
+**JSON Export:**
+1. Click **"Export"** button
+2. Select **"Export as JSON"**
+3. Full data with all details
+4. Use for backup or migration
+
+**CSV Export:**
+1. Click **"Export"** button
+2. Select **"Export as CSV"**
+3. Spreadsheet-compatible format
+4. Open in Excel/Sheets
+
+#### Share Your Chart
+
+**Copy JSON:**
+1. Click **"Share"** button
+2. Select **"Copy JSON to Clipboard"**
+3. Share data with others
+
+**Generate Link:**
+1. Click **"Share"** button
+2. Select **"Generate Share Link"**
+3. Copy the URL
+4. Anyone with link can import
+
+#### Print
+1. Click **Print** icon (🖨️)
 2. Browser print dialog opens
-3. Chart is optimized for printing
+3. Chart optimized for printing
+4. Adjust print settings
+5. Print or save as PDF
 
-#### 11. Keyboard Shortcuts
+---
+
+### ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl/Cmd + N` | New Project |
+| `Ctrl/Cmd + T` | New Task |
+| `Ctrl/Cmd + F` | Focus Search |
+| `Ctrl/Cmd + P` | Print |
+| `Ctrl/Cmd + E` | Export |
+| `Escape` | Close Modal |
+| `?` | Show Help |
+
+---
+
+### 💡 Pro Tips
+
+#### Best Practices
+✅ **Use Templates**: Start projects faster  
+✅ **Natural Language**: Quick task creation  
+✅ **Color Code**: Organize by priority/type  
+✅ **Update Progress**: Keep data current  
+✅ **Review Insights**: Learn from history  
+
+#### Productivity Hacks
+🚀 **Batch Create**: Use templates for similar projects  
+🚀 **Smart Naming**: Use consistent task names for better insights  
+🚀 **Dependencies**: Link related tasks  
+🚀 **Regular Reviews**: Check progress weekly  
+🚀 **Export Often**: Backup your data  
+
+#### Common Workflows
+
+**New Project Setup:**
+```
+1. Use template or create from scratch
+2. Add all tasks upfront
+3. Set realistic durations
+4. Link dependencies
+5. Track progress daily
+```
+
+**Sprint Planning:**
+```
+1. Create project for sprint
+2. Add user stories as tasks
+3. Use week view
+4. Update daily
+5. Review velocity
+```
+
+**Client Projects:**
+```
+1. Save client workflow as template
+2. Use for each new client
+3. Customize per project
+4. Share progress via link
+5. Export for invoicing
+```
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🎯 Advanced Features
+
+### Progress Velocity
 
 - **Ctrl + N**: Create new project
 - **Ctrl + F**: Focus search box
-- **Ctrl + E**: Open export modal
-- **Ctrl + +**: Zoom in timeline
-- **Ctrl + -**: Zoom out timeline
-- **?**: Show keyboard shortcuts guide
-- **Escape**: Close any open modal
 
-#### 12. Tips for Best Results
-
-✅ **Break Down Projects**: Create multiple small tasks instead of one large task  
-✅ **Update Progress Regularly**: Keep task progress current for accurate project tracking  
-✅ **Use Color Coding**: Assign different colors to categorize projects  
-✅ **Set Realistic Durations**: Ensure task durations are achievable  
-✅ **Use Dependencies**: Link tasks that depend on each other  
-✅ **Check Smart Suggestions**: Review AI recommendations daily  
-✅ **Monitor Velocity**: Track progress velocity to predict completion  
-
-### Advanced Features
+### Smart Suggestions
 
 #### Task Dependencies
 - Select dependent tasks when creating/editing

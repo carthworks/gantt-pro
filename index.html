@@ -116,6 +116,14 @@
 
                 <!-- Action Buttons -->
                 <div class="header-actions">
+                    <button class="btn-icon" id="templatesBtn" title="Project Templates">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
+                    </button>
                     <button class="btn-icon" id="exportBtn" title="Export Data">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -242,12 +250,18 @@
 
                 <!-- Progress Velocity Tracker -->
                 <div class="intelligence-section">
-                    <div class="intelligence-header">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    <div class="intelligence-header collapsible" data-section="velocity">
+                        <div class="intelligence-header-left">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            <h3>Progress Velocity</h3>
+                        </div>
+                        <svg class="collapse-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
-                        <h3>Progress Velocity</h3>
                     </div>
                     <div class="velocity-content">
                         <div class="velocity-stat">
@@ -275,17 +289,68 @@
 
                 <!-- Smart Task Suggestions -->
                 <div class="intelligence-section">
-                    <div class="intelligence-header">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                            <path d="M2 17l10 5 10-5"></path>
-                            <path d="M2 12l10 5 10-5"></path>
+                    <div class="intelligence-header collapsible" data-section="suggestions">
+                        <div class="intelligence-header-left">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                <path d="M2 17l10 5 10-5"></path>
+                                <path d="M2 12l10 5 10-5"></path>
+                            </svg>
+                            <h3>What to Work On Today</h3>
+                        </div>
+                        <svg class="collapse-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
-                        <h3>What to Work On Today</h3>
                     </div>
                     <div class="suggestions-content" id="smartSuggestions">
                         <!-- Smart suggestions will be dynamically added here -->
+                    </div>
+                </div>
+
+                <!-- Critical Path Highlighting -->
+                <div class="intelligence-section">
+                    <div class="intelligence-header collapsible" data-section="critical-path">
+                        <div class="intelligence-header-left">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                                </path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                            <h3>Critical Path</h3>
+                        </div>
+                        <svg class="collapse-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="critical-path-content">
+                        <p class="critical-path-description">
+                            Highlight the longest sequence of dependent tasks that determines your project's minimum
+                            duration.
+                        </p>
+                        <button class="btn-critical-path" id="toggleCriticalPath">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <span id="criticalPathBtnText">Show Critical Path</span>
+                        </button>
+                        <div class="critical-path-info" id="criticalPathInfo" style="display: none;">
+                            <div class="cp-stat">
+                                <span class="cp-label">Critical Tasks:</span>
+                                <span class="cp-value" id="criticalTaskCount">0</span>
+                            </div>
+                            <div class="cp-stat">
+                                <span class="cp-label">Min Duration:</span>
+                                <span class="cp-value" id="criticalPathDuration">0 days</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -430,79 +495,120 @@
                     <input type="hidden" id="isTask">
                     <input type="hidden" id="parentProjectId">
 
-                    <!-- Project Selector (only shown when adding task from header) -->
-                    <div class="form-group" id="projectSelectorField" style="display: none;">
-                        <label for="parentProjectSelector">Project *</label>
-                        <select id="parentProjectSelector" class="form-select">
-                            <option value="">Select a project...</option>
-                            <!-- Options will be populated dynamically -->
-                        </select>
-                        <small class="form-hint">Choose which project this task belongs to</small>
+                    <!-- Natural Language Input (only shown for new items) -->
+                    <div class="form-group" id="nlpInputField" style="display: none;">
+                        <label for="nlpInput">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            Quick Create with Natural Language
+                        </label>
+                        <textarea id="nlpInput" class="form-textarea nlp-input" rows="2"
+                            placeholder="Try: 'Design homepage from Jan 15 to Jan 30, 50% done' or 'Backend API for 2 weeks starting tomorrow'"></textarea>
+                        <div class="nlp-actions">
+                            <button type="button" class="btn-primary-sm" id="parseNLPBtn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Parse & Fill Form
+                            </button>
+                            <button type="button" class="btn-text" id="skipNLPBtn">Use Traditional Form</button>
+                        </div>
+                        <div class="nlp-examples">
+                            <small><strong>Examples:</strong></small>
+                            <div class="nlp-example-tags">
+                                <button type="button" class="nlp-example-tag"
+                                    data-example="Design homepage from 2025-01-15 for 15 days">Date range
+                                    example</button>
+                                <button type="button" class="nlp-example-tag"
+                                    data-example="Backend API starting tomorrow for 2 weeks, 30% complete">Relative date
+                                    example</button>
+                                <button type="button" class="nlp-example-tag"
+                                    data-example="Testing phase from next Monday, duration 5 days">Weekday
+                                    example</button>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 2;">
-                            <label for="projectName">Name *</label>
-                            <input type="text" id="projectName" class="form-input" required
-                                placeholder="Enter project or task name">
+                    <!-- Traditional Form Fields (initially hidden when NLP is shown) -->
+                    <div id="traditionalFormFields">
+                        <!-- Project Selector (only shown when adding task from header) -->
+                        <div class="form-group" id="projectSelectorField" style="display: none;">
+                            <label for="parentProjectSelector">Project *</label>
+                            <select id="parentProjectSelector" class="form-select">
+                                <option value="">Select a project...</option>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                            <small class="form-hint">Choose which project this task belongs to</small>
                         </div>
 
-                        <div class="form-group">
-                            <label for="projectColor">Color</label>
-                            <div class="color-picker-inline">
-                                <input type="color" id="projectColor" class="form-color" value="#667eea">
-                                <div class="color-presets">
-                                    <button type="button" class="color-preset" data-color="#667eea"
-                                        style="background: #667eea;"></button>
-                                    <button type="button" class="color-preset" data-color="#f093fb"
-                                        style="background: #f093fb;"></button>
-                                    <button type="button" class="color-preset" data-color="#4facfe"
-                                        style="background: #4facfe;"></button>
-                                    <button type="button" class="color-preset" data-color="#43e97b"
-                                        style="background: #43e97b;"></button>
-                                    <button type="button" class="color-preset" data-color="#fa709a"
-                                        style="background: #fa709a;"></button>
-                                    <button type="button" class="color-preset" data-color="#feca57"
-                                        style="background: #feca57;"></button>
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 2;">
+                                <label for="projectName">Name *</label>
+                                <input type="text" id="projectName" class="form-input" required
+                                    placeholder="Enter project or task name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="projectColor">Color</label>
+                                <div class="color-picker-inline">
+                                    <input type="color" id="projectColor" class="form-color" value="#667eea">
+                                    <div class="color-presets">
+                                        <button type="button" class="color-preset" data-color="#667eea"
+                                            style="background: #667eea;"></button>
+                                        <button type="button" class="color-preset" data-color="#f093fb"
+                                            style="background: #f093fb;"></button>
+                                        <button type="button" class="color-preset" data-color="#4facfe"
+                                            style="background: #4facfe;"></button>
+                                        <button type="button" class="color-preset" data-color="#43e97b"
+                                            style="background: #43e97b;"></button>
+                                        <button type="button" class="color-preset" data-color="#fa709a"
+                                            style="background: #fa709a;"></button>
+                                        <button type="button" class="color-preset" data-color="#feca57"
+                                            style="background: #feca57;"></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="projectStart">Start Date *</label>
-                            <input type="date" id="projectStart" class="form-input" required>
-                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="projectStart">Start Date *</label>
+                                <input type="date" id="projectStart" class="form-input" required>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="projectDuration">Duration (days) *</label>
-                            <input type="number" id="projectDuration" class="form-input" min="1" required
-                                placeholder="1">
-                        </div>
+                            <div class="form-group">
+                                <label for="projectDuration">Duration (days) *</label>
+                                <input type="number" id="projectDuration" class="form-input" min="1" required
+                                    placeholder="1">
+                            </div>
 
-                        <div class="form-group">
-                            <label for="projectProgress">Progress (%)</label>
-                            <div class="progress-input-wrapper">
-                                <input type="range" id="projectProgress" class="form-range" min="0" max="100" value="0">
-                                <span class="progress-value" id="progressValue">0%</span>
+                            <div class="form-group">
+                                <label for="projectProgress">Progress (%)</label>
+                                <div class="progress-input-wrapper">
+                                    <input type="range" id="projectProgress" class="form-range" min="0" max="100"
+                                        value="0">
+                                    <span class="progress-value" id="progressValue">0%</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="projectDescription">Description</label>
-                        <textarea id="projectDescription" class="form-textarea" rows="3"
-                            placeholder="Add project description..."></textarea>
-                    </div>
+                        <div class="form-group">
+                            <label for="projectDescription">Description</label>
+                            <textarea id="projectDescription" class="form-textarea" rows="3"
+                                placeholder="Add project description..."></textarea>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="projectDependencies">Dependencies</label>
-                        <select id="projectDependencies" class="form-select" multiple>
-                            <!-- Options will be populated dynamically -->
-                        </select>
-                        <small class="form-hint">Hold Ctrl/Cmd to select multiple dependencies</small>
-                    </div>
+                        <div class="form-group">
+                            <label for="projectDependencies">Dependencies</label>
+                            <select id="projectDependencies" class="form-select" multiple>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                            <small class="form-hint">Hold Ctrl/Cmd to select multiple dependencies</small>
+                        </div>
+                    </div> <!-- End of traditionalFormFields -->
 
                     <div class="modal-footer">
                         <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
@@ -977,6 +1083,396 @@
                 <div class="modal-footer">
                     <button type="button" class="btn-secondary" id="cancelProjectSelector">Cancel</button>
                     <button type="button" class="btn-primary" id="confirmProjectSelector">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates Modal -->
+    <div class="modal" id="templatesModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>📚 Project Templates & Learning</h3>
+                <button class="modal-close" id="closeTemplatesModal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Template Tabs -->
+                <div class="template-tabs">
+                    <button class="template-tab active" data-tab="built-in">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                        </svg>
+                        Built-in Templates
+                    </button>
+                    <button class="template-tab" data-tab="custom">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        </svg>
+                        My Templates
+                    </button>
+                    <button class="template-tab" data-tab="learned">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                        Learning Insights
+                    </button>
+                </div>
+
+                <!-- Built-in Templates Tab -->
+                <div class="template-content active" id="builtInTemplates">
+                    <div class="templates-grid" id="builtInTemplatesGrid">
+                        <!-- Templates will be dynamically added here -->
+                    </div>
+                </div>
+
+                <!-- Custom Templates Tab -->
+                <div class="template-content" id="customTemplates">
+                    <div class="custom-templates-header">
+                        <p class="template-hint">Save your current projects as templates for future use</p>
+                        <button class="btn-primary-sm" id="saveAsTemplateBtn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                            Save Current as Template
+                        </button>
+                    </div>
+                    <div class="templates-grid" id="customTemplatesGrid">
+                        <!-- Custom templates will be dynamically added here -->
+                    </div>
+                </div>
+
+                <!-- Learning Insights Tab -->
+                <div class="template-content" id="learningInsights">
+                    <div class="insights-container" id="insightsContainer">
+                        <!-- Learning insights will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help/Guide Modal -->
+    <div class="modal modal-large" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📖 How to Use Gantto</h2>
+                <button class="modal-close" id="closeHelpModal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Guide Tabs -->
+                <div class="template-tabs">
+                    <button class="template-tab active" data-tab="getting-started">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                        </svg>
+                        Getting Started
+                    </button>
+                    <button class="template-tab" data-tab="new-features">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v6l4 2"></path>
+                        </svg>
+                        New Features
+                    </button>
+                    <button class="template-tab" data-tab="tips">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
+                        Tips & Tricks
+                    </button>
+                </div>
+
+                <!-- Getting Started Tab -->
+                <div class="template-content active" id="gettingStartedContent">
+                    <div class="help-section">
+                        <h3>🚀 Quick Start</h3>
+                        <div class="help-steps">
+                            <div class="help-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Create a Project</h4>
+                                    <p>Click the <strong>"Add Project"</strong> button in the sidebar. Fill in the
+                                        project name, start date, duration, and color.</p>
+                                </div>
+                            </div>
+                            <div class="help-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Add Tasks</h4>
+                                    <p>Expand your project and click <strong>"Add Task"</strong>. Tasks must fit within
+                                        the project's date range.</p>
+                                </div>
+                            </div>
+                            <div class="help-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Track Progress</h4>
+                                    <p>Update task progress (0-100%). Project progress auto-calculates from task
+                                        progress.</p>
+                                </div>
+                            </div>
+                            <div class="help-step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h4>View Timeline</h4>
+                                    <p>See your projects on the Gantt chart. Switch between Day, Week, Month, and Year
+                                        views.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h3>📊 Understanding the Interface</h3>
+                        <div class="help-grid">
+                            <div class="help-card">
+                                <div class="help-icon">📁</div>
+                                <h4>Sidebar</h4>
+                                <p>Manage projects, view stats, and access smart features</p>
+                            </div>
+                            <div class="help-card">
+                                <div class="help-icon">📈</div>
+                                <h4>Gantt Chart</h4>
+                                <p>Visual timeline showing project and task bars with progress</p>
+                            </div>
+                            <div class="help-card">
+                                <div class="help-icon">🎨</div>
+                                <h4>Color Coding</h4>
+                                <p>Assign colors to projects and tasks for easy identification</p>
+                            </div>
+                            <div class="help-card">
+                                <div class="help-icon">🔗</div>
+                                <h4>Dependencies</h4>
+                                <p>Link tasks together to show relationships</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Features Tab -->
+                <div class="template-content" id="newFeaturesContent">
+                    <div class="help-section">
+                        <h3>🗣️ Natural Language Task Creation</h3>
+                        <p class="help-description">Create tasks using plain English! Just describe what you want and
+                            let Gantto parse it.</p>
+                        <div class="help-examples">
+                            <div class="help-example">
+                                <div class="example-label">Example 1:</div>
+                                <code>"Design homepage from Jan 15 for 2 weeks, 50% done"</code>
+                            </div>
+                            <div class="help-example">
+                                <div class="example-label">Example 2:</div>
+                                <code>"Backend API starting tomorrow for 10 days"</code>
+                            </div>
+                            <div class="help-example">
+                                <div class="example-label">Example 3:</div>
+                                <code>"Testing phase from next Monday for 5 days, 30% complete"</code>
+                            </div>
+                        </div>
+                        <div class="help-tip">
+                            <strong>💡 Tip:</strong> Click "Parse & Fill Form" after typing your description to
+                            auto-fill the form fields!
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h3>📚 Smart Templates & Learning</h3>
+                        <p class="help-description">Use pre-built templates or create your own. Get AI-powered insights
+                            from your project history.</p>
+                        <div class="help-grid">
+                            <div class="help-card">
+                                <div class="help-icon">💻</div>
+                                <h4>Built-in Templates</h4>
+                                <p>6 professional templates: Web Development, Marketing, Product Launch, and more</p>
+                            </div>
+                            <div class="help-card">
+                                <div class="help-icon">💾</div>
+                                <h4>Custom Templates</h4>
+                                <p>Save your projects as templates for future reuse</p>
+                            </div>
+                            <div class="help-card">
+                                <div class="help-icon">🧠</div>
+                                <h4>Learning Insights</h4>
+                                <p>AI analyzes your data to suggest task durations and identify patterns</p>
+                            </div>
+                        </div>
+                        <div class="help-tip">
+                            <strong>💡 Tip:</strong> Click the Templates button (📚) in the header to access all
+                            template features!
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h3>⚡ Critical Path Highlighting</h3>
+                        <p class="help-description">Identify the longest sequence of dependent tasks that determines
+                            your project's minimum duration.</p>
+                        <div class="help-steps">
+                            <div class="help-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Add Dependencies</h4>
+                                    <p>Link tasks together by selecting dependencies when creating/editing tasks.</p>
+                                </div>
+                            </div>
+                            <div class="help-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Show Critical Path</h4>
+                                    <p>Click "Show Critical Path" in the sidebar's Critical Path section.</p>
+                                </div>
+                            </div>
+                            <div class="help-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>View Highlighted Tasks</h4>
+                                    <p>Critical tasks will glow with a red border and lightning bolt (⚡) badge.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="help-tip">
+                            <strong>💡 Tip:</strong> Critical tasks have zero slack - any delay affects the entire
+                            project timeline!
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h3>📂 Collapsible Sections</h3>
+                        <p class="help-description">Manage sidebar space by collapsing sections you don't need.</p>
+                        <p>Click on any intelligence section header (Progress Velocity, Smart Suggestions, Critical
+                            Path) to collapse or expand it. Your preferences are saved automatically!</p>
+                    </div>
+                </div>
+
+                <!-- Tips & Tricks Tab -->
+                <div class="template-content" id="tipsContent">
+                    <div class="help-section">
+                        <h3>⌨️ Keyboard Shortcuts</h3>
+                        <div class="shortcuts-grid">
+                            <div class="shortcut-item">
+                                <kbd>Ctrl/Cmd + N</kbd>
+                                <span>New Project</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <kbd>Ctrl/Cmd + T</kbd>
+                                <span>New Task</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <kbd>Ctrl/Cmd + F</kbd>
+                                <span>Focus Search</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <kbd>Ctrl/Cmd + P</kbd>
+                                <span>Print</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <kbd>Ctrl/Cmd + E</kbd>
+                                <span>Export</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <kbd>Escape</kbd>
+                                <span>Close Modal</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h3>✨ Pro Tips</h3>
+                        <div class="tips-list">
+                            <div class="tip-item">
+                                <span class="tip-icon">🎯</span>
+                                <div>
+                                    <strong>Use Templates:</strong> Start projects faster with built-in templates or
+                                    your own custom ones.
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <span class="tip-icon">🗣️</span>
+                                <div>
+                                    <strong>Natural Language:</strong> Type tasks in plain English to save time on data
+                                    entry.
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <span class="tip-icon">🎨</span>
+                                <div>
+                                    <strong>Color Code:</strong> Assign different colors to categorize projects by
+                                    priority or type.
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <span class="tip-icon">📊</span>
+                                <div>
+                                    <strong>Update Progress:</strong> Keep task progress current for accurate project
+                                    tracking and velocity calculations.
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <span class="tip-icon">🔗</span>
+                                <div>
+                                    <strong>Use Dependencies:</strong> Link related tasks to see the critical path and
+                                    manage workflows better.
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <span class="tip-icon">💾</span>
+                                <div>
+                                    <strong>Export Often:</strong> Backup your data by exporting to JSON or CSV
+                                    regularly.
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <span class="tip-icon">📈</span>
+                                <div>
+                                    <strong>Review Insights:</strong> Check Learning Insights to improve your planning
+                                    based on historical data.
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <span class="tip-icon">⚡</span>
+                                <div>
+                                    <strong>Critical Path:</strong> Focus on critical tasks to prevent project delays.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h3>🎓 Best Practices</h3>
+                        <ul class="best-practices-list">
+                            <li>Break down large projects into smaller, manageable tasks</li>
+                            <li>Set realistic durations based on your team's capacity</li>
+                            <li>Use consistent task naming for better learning insights</li>
+                            <li>Review progress velocity weekly to stay on track</li>
+                            <li>Collapse sidebar sections you don't use to save space</li>
+                            <li>Save successful project workflows as custom templates</li>
+                            <li>Check smart suggestions daily for priority tasks</li>
+                            <li>Use different view modes (Day/Week/Month) for different planning needs</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

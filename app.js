@@ -35,7 +35,7 @@ class GanttApp {
   addSampleData() {
     const today = new Date();
     const formatDate = (date) => date.toISOString().split('T')[0];
-    
+
     this.projects = [
       {
         id: this.generateId(),
@@ -114,7 +114,7 @@ class GanttApp {
         ]
       }
     ];
-    
+
     this.saveData();
   }
 
@@ -126,14 +126,14 @@ class GanttApp {
     const today = new Date();
     const start = new Date(today);
     start.setDate(1); // First day of month
-    
+
     const end = new Date(today);
     end.setMonth(end.getMonth() + 1);
     end.setDate(0); // Last day of month
-    
+
     this.startDate = start;
     this.endDate = end;
-    
+
     document.getElementById('startDate').valueAsDate = start;
     document.getElementById('endDate').valueAsDate = end;
   }
@@ -210,9 +210,9 @@ class GanttApp {
   openModal(projectId = null, isTask = false, parentProjectId = null) {
     const modal = document.getElementById('projectModal');
     const form = document.getElementById('projectForm');
-    
+
     form.reset();
-    
+
     if (projectId) {
       // Edit mode
       const item = this.findItem(projectId);
@@ -231,16 +231,16 @@ class GanttApp {
       document.getElementById('modalTitle').textContent = isTask ? 'New Task' : 'New Project';
       document.getElementById('projectProgress').value = 0;
       document.getElementById('progressValue').textContent = '0%';
-      
+
       // Set default date to today
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('projectStart').value = today;
       document.getElementById('projectDuration').value = 1;
     }
-    
+
     document.getElementById('isTask').value = isTask;
     document.getElementById('parentProjectId').value = parentProjectId || '';
-    
+
     modal.classList.add('active');
   }
 
@@ -263,7 +263,7 @@ class GanttApp {
     const id = document.getElementById('projectId').value;
     const isTask = document.getElementById('isTask').value === 'true';
     const parentProjectId = document.getElementById('parentProjectId').value;
-    
+
     const data = {
       id: id || this.generateId(),
       name: document.getElementById('projectName').value,
@@ -313,7 +313,7 @@ class GanttApp {
 
   deleteItem(id) {
     if (!confirm('Are you sure you want to delete this item?')) return;
-    
+
     // Check if it's a project
     const projectIndex = this.projects.findIndex(p => p.id === id);
     if (projectIndex !== -1) {
@@ -330,7 +330,7 @@ class GanttApp {
         }
       }
     }
-    
+
     this.saveData();
     this.render();
   }
@@ -343,7 +343,7 @@ class GanttApp {
 
   renderSidebar() {
     const container = document.getElementById('projectsList');
-    
+
     if (this.projects.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
@@ -359,7 +359,7 @@ class GanttApp {
       `;
       return;
     }
-    
+
     container.innerHTML = this.projects.map(project => `
       <div class="project-item" data-id="${project.id}">
         <div class="project-header">
@@ -479,7 +479,7 @@ class GanttApp {
 
   renderGanttTable() {
     const tbody = document.getElementById('ganttTableBody');
-    
+
     if (this.projects.length === 0) {
       tbody.innerHTML = `
         <tr>
@@ -490,13 +490,13 @@ class GanttApp {
       `;
       return;
     }
-    
+
     let rows = '';
-    
+
     this.projects.forEach(project => {
       rows += `
-        <tr data-id="${project.id}">
-          <td><strong>${this.escapeHtml(project.name)}</strong></td>
+        <tr data-id="${project.id}" class="task-row background-color: ${project.color};">
+          <td class="background-color: ${project.color};"><strong>${this.escapeHtml(project.name)}</strong></td>
           <td>${this.formatDate(project.startDate)}</td>
           <td>${project.duration}</td>
           <td>
@@ -523,7 +523,7 @@ class GanttApp {
           </td>
         </tr>
       `;
-      
+
       if (project.tasks) {
         project.tasks.forEach(task => {
           rows += `
@@ -558,7 +558,7 @@ class GanttApp {
         });
       }
     });
-    
+
     tbody.innerHTML = rows;
 
     // Add event listeners
@@ -590,37 +590,37 @@ class GanttApp {
   renderTimeline() {
     const header = document.getElementById('timelineHeader');
     const timeline = document.getElementById('ganttTimeline');
-    
+
     if (!this.startDate || !this.endDate) return;
-    
+
     const dates = this.getDateRange();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     // Render header
     header.innerHTML = dates.map(date => {
       const isToday = date.getTime() === today.getTime();
       return `<div class="timeline-cell ${isToday ? 'today' : ''}">${this.formatTimelineDate(date)}</div>`;
     }).join('');
-    
+
     // Render timeline rows
     if (this.projects.length === 0) {
       timeline.innerHTML = '';
       return;
     }
-    
+
     let rows = '';
-    
+
     this.projects.forEach(project => {
       rows += this.renderTimelineRow(project, dates, today);
-      
+
       if (project.tasks) {
         project.tasks.forEach(task => {
           rows += this.renderTimelineRow(task, dates, today);
         });
       }
     });
-    
+
     timeline.innerHTML = rows;
   }
 
@@ -628,19 +628,19 @@ class GanttApp {
     const startDate = new Date(item.startDate);
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + item.duration - 1);
-    
+
     const firstDate = dates[0];
     const cellWidth = 60;
-    
+
     const daysDiff = Math.floor((startDate - firstDate) / (1000 * 60 * 60 * 24));
     const left = daysDiff * cellWidth;
     const width = item.duration * cellWidth;
-    
+
     const gridCells = dates.map(date => {
       const isToday = date.getTime() === today.getTime();
       return `<div class="timeline-grid-cell ${isToday ? 'today' : ''}"></div>`;
     }).join('');
-    
+
     return `
       <div class="timeline-row">
         ${gridCells}
@@ -655,12 +655,12 @@ class GanttApp {
   getDateRange() {
     const dates = [];
     const current = new Date(this.startDate);
-    
+
     while (current <= this.endDate) {
       dates.push(new Date(current));
       current.setDate(current.getDate() + 1);
     }
-    
+
     return dates;
   }
 
@@ -674,7 +674,7 @@ class GanttApp {
   formatTimelineDate(date) {
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    
+
     switch (this.currentView) {
       case 'day':
         return `${date.getDate()}\n${days[date.getDay()]}`;

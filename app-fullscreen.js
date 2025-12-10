@@ -15,6 +15,8 @@ class GanttProApp {
         this.sortBy = null;
         this.sortDirection = 'asc';
         this.sidebarCollapsed = false;
+        this.showCriticalPath = false;
+        this.criticalPathTasks = [];
 
         this.init();
     }
@@ -23,6 +25,11 @@ class GanttProApp {
         this.loadDataFromURL(); // Check for shared data in URL
         this.loadData();
         this.setupEventListeners();
+        this.setupNLPEventListeners();
+        this.setupTemplatesEventListeners();
+        this.setupCollapsibleSections();
+        this.setupCriticalPathEventListeners();
+        this.setupHelpModal();
         this.setDefaultDateRange();
         this.setupKeyboardShortcuts();
         this.render();
@@ -153,7 +160,18 @@ class GanttProApp {
 
         const end = new Date(today);
         end.setMonth(end.getMonth() + 1);
-        end.setDate(0);
+        end.setDate(0); // Last day of next month
+
+        // Extend end date to complete the week (to Saturday)
+        // This ensures we always show complete weeks
+        const endDayOfWeek = end.getDay();
+        if (endDayOfWeek !== 6) { // If not Saturday
+            const daysToAdd = 6 - endDayOfWeek;
+            end.setDate(end.getDate() + daysToAdd);
+        }
+
+        // Add a few more days to show continuity into next month
+        end.setDate(end.getDate() + 7);
 
         this.startDate = start;
         this.endDate = end;
@@ -986,9 +1004,18 @@ class GanttProApp {
         const progressContainer = progressField.closest('.form-group');
         const projectSelectorField = document.getElementById('projectSelectorField');
         const parentProjectSelector = document.getElementById('parentProjectSelector');
+        const nlpField = document.getElementById('nlpInputField');
+        const traditionalFields = document.getElementById('traditionalFormFields');
+        const nlpInput = document.getElementById('nlpInput');
 
         form.reset();
         this.populateDependenciesDropdown(projectId);
+
+        // Reset NLP field
+        if (nlpInput) {
+            nlpInput.value = '';
+            nlpInput.classList.remove('parsing', 'success', 'error');
+        }
 
         // Handle project selector field visibility and population
         if (showProjectSelector && isTask && !parentProjectId) {
@@ -1008,6 +1035,10 @@ class GanttProApp {
         }
 
         if (projectId) {
+            // Editing existing item - hide NLP, show traditional form
+            nlpField.style.display = 'none';
+            traditionalFields.style.display = 'block';
+
             const item = this.findItem(projectId);
             if (item) {
                 document.getElementById('modalTitle').textContent = isTask ? 'Edit Task' : 'Edit Project';
@@ -1028,6 +1059,10 @@ class GanttProApp {
                 }
             }
         } else {
+            // Creating new item - show NLP field first
+            nlpField.style.display = 'block';
+            traditionalFields.style.display = 'none';
+
             document.getElementById('modalTitle').textContent = isTask ? 'New Task' : 'New Project';
             document.getElementById('projectProgress').value = 0;
             document.getElementById('progressValue').textContent = '0%';
@@ -1452,7 +1487,7 @@ class GanttProApp {
         filteredProjects.forEach(project => {
             const depCount = project.dependencies ? project.dependencies.length : 0;
             rows += `
-        <tr data-id="${project.id}">
+        <tr data-id="${project.id}" class="task-row background-color: ${project.color};">
           <td><strong>${this.escapeHtml(project.name)}</strong></td>
           <td>${this.formatDate(project.startDate)}</td>
           <td>${project.duration}</td>
@@ -1636,10 +1671,14 @@ class GanttProApp {
             return `<div class="timeline-grid-cell ${isToday ? 'today' : ''}"></div>`;
         }).join('');
 
+        // Check if this task is on the critical path
+        const isCritical = this.showCriticalPath && this.criticalPathTasks.includes(item.id);
+        const criticalClass = isCritical ? ' critical-path' : '';
+
         return `
       <div class="timeline-row">
         ${gridCells}
-        <div class="timeline-bar" style="left: ${left}px; width: ${width}px; background: ${item.color};">
+        <div class="timeline-bar${criticalClass}" style="left: ${left}px; width: ${width}px; background: ${item.color};">
           <div class="timeline-bar-progress" style="width: ${item.progress}%;"></div>
           <div class="timeline-bar-text">${this.escapeHtml(item.name)}</div>
         </div>
@@ -1650,13 +1689,16 @@ class GanttProApp {
     getDateRange() {
         const dates = [];
         const current = new Date(this.startDate);
+        const maxIterations = 1000; // Safety limit to prevent infinite loops
+        let iterations = 0;
 
         switch (this.currentView) {
             case 'day':
                 // Show each day
-                while (current <= this.endDate) {
+                while (current <= this.endDate && iterations < maxIterations) {
                     dates.push(new Date(current));
                     current.setDate(current.getDate() + 1);
+                    iterations++;
                 }
                 break;
 
@@ -1664,36 +1706,49 @@ class GanttProApp {
                 // Show start of each week
                 // Move to the start of the week (Sunday)
                 current.setDate(current.getDate() - current.getDay());
-                while (current <= this.endDate) {
+                while (current <= this.endDate && iterations < maxIterations) {
                     dates.push(new Date(current));
                     current.setDate(current.getDate() + 7);
+                    iterations++;
                 }
                 break;
 
             case 'month':
                 // Show start of each month
                 current.setDate(1); // Move to first day of month
-                while (current <= this.endDate) {
+                while (current <= this.endDate && iterations < maxIterations) {
                     dates.push(new Date(current));
                     current.setMonth(current.getMonth() + 1);
+                    iterations++;
                 }
                 break;
 
             case 'year':
                 // Show start of each year
                 current.setMonth(0, 1); // Move to January 1st
-                while (current <= this.endDate) {
+                while (current <= this.endDate && iterations < maxIterations) {
                     dates.push(new Date(current));
                     current.setFullYear(current.getFullYear() + 1);
+                    iterations++;
                 }
                 break;
 
             default:
                 // Default to day view
-                while (current <= this.endDate) {
+                while (current <= this.endDate && iterations < maxIterations) {
                     dates.push(new Date(current));
                     current.setDate(current.getDate() + 1);
+                    iterations++;
                 }
+        }
+
+        // Ensure we have at least some dates to show
+        if (dates.length === 0) {
+            const fallbackDate = new Date();
+            for (let i = 0; i < 30; i++) {
+                dates.push(new Date(fallbackDate));
+                fallbackDate.setDate(fallbackDate.getDate() + 1);
+            }
         }
 
         return dates;
@@ -1712,6 +1767,10 @@ class GanttProApp {
 
         switch (this.currentView) {
             case 'day':
+                // Show month abbreviation on the 1st of each month for clarity
+                if (date.getDate() === 1) {
+                    return `${months[date.getMonth()]} ${date.getDate()}\n${days[date.getDay()]}`;
+                }
                 return `${date.getDate()}\n${days[date.getDay()]}`;
             case 'week':
                 return `Week ${this.getWeekNumber(date)}`;
@@ -1803,6 +1862,1094 @@ class GanttProApp {
                 console.error('Load from URL failed:', err);
             }
         }
+    }
+
+    // ===== NATURAL LANGUAGE PROCESSING =====
+
+    parseNaturalLanguage(text) {
+        const result = {
+            name: '',
+            startDate: '',
+            duration: 1,
+            progress: 0,
+            color: '#667eea',
+            description: ''
+        };
+
+        // Extract name (everything before date/duration keywords)
+        const nameMatch = text.match(/^([^,]+?)(?=\s+(?:from|starting|for|on|,|duration|$))/i);
+        if (nameMatch) {
+            result.name = nameMatch[1].trim();
+        }
+
+        // Extract progress percentage
+        const progressMatch = text.match(/(\d+)%\s*(?:done|complete|progress|finished)/i);
+        if (progressMatch) {
+            result.progress = Math.min(100, Math.max(0, parseInt(progressMatch[1])));
+        }
+
+        // Extract duration
+        const durationMatch = text.match(/(?:for|duration:?)\s*(\d+)\s*(day|days|week|weeks|month|months)/i);
+        if (durationMatch) {
+            const value = parseInt(durationMatch[1]);
+            const unit = durationMatch[2].toLowerCase();
+
+            if (unit.startsWith('week')) {
+                result.duration = value * 7;
+            } else if (unit.startsWith('month')) {
+                result.duration = value * 30;
+            } else {
+                result.duration = value;
+            }
+        }
+
+        // Extract start date
+        result.startDate = this.parseStartDate(text);
+
+        // If no name was extracted, use a default
+        if (!result.name) {
+            result.name = 'New Task';
+        }
+
+        return result;
+    }
+
+    parseStartDate(text) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Check for absolute date (YYYY-MM-DD or MM/DD/YYYY or DD-MM-YYYY)
+        const absoluteDateMatch = text.match(/(\d{4}[-/]\d{1,2}[-/]\d{1,2})|(\d{1,2}[-/]\d{1,2}[-/]\d{4})/);
+        if (absoluteDateMatch) {
+            const dateStr = absoluteDateMatch[0];
+            let date;
+
+            if (dateStr.match(/^\d{4}/)) {
+                // YYYY-MM-DD format
+                date = new Date(dateStr);
+            } else {
+                // Try to parse MM/DD/YYYY or DD/MM/YYYY
+                const parts = dateStr.split(/[-/]/);
+                // Assume MM/DD/YYYY for now
+                date = new Date(parts[2], parts[0] - 1, parts[1]);
+            }
+
+            if (!isNaN(date.getTime())) {
+                return date.toISOString().split('T')[0];
+            }
+        }
+
+        // Check for relative dates
+        if (/\btoday\b/i.test(text)) {
+            return today.toISOString().split('T')[0];
+        }
+
+        if (/\btomorrow\b/i.test(text)) {
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            return tomorrow.toISOString().split('T')[0];
+        }
+
+        if (/\bnext week\b/i.test(text)) {
+            const nextWeek = new Date(today);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            return nextWeek.toISOString().split('T')[0];
+        }
+
+        if (/\bnext month\b/i.test(text)) {
+            const nextMonth = new Date(today);
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            return nextMonth.toISOString().split('T')[0];
+        }
+
+        // Check for specific weekdays (e.g., "next Monday")
+        const weekdayMatch = text.match(/(?:next|this)\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i);
+        if (weekdayMatch) {
+            const targetDay = weekdayMatch[1].toLowerCase();
+            const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const targetDayIndex = days.indexOf(targetDay);
+            const currentDayIndex = today.getDay();
+
+            let daysToAdd = targetDayIndex - currentDayIndex;
+            if (daysToAdd <= 0) {
+                daysToAdd += 7; // Next week
+            }
+
+            const targetDate = new Date(today);
+            targetDate.setDate(targetDate.getDate() + daysToAdd);
+            return targetDate.toISOString().split('T')[0];
+        }
+
+        // Check for "in X days/weeks"
+        const inDaysMatch = text.match(/in\s+(\d+)\s+(day|days|week|weeks)/i);
+        if (inDaysMatch) {
+            const value = parseInt(inDaysMatch[1]);
+            const unit = inDaysMatch[2].toLowerCase();
+            const multiplier = unit.startsWith('week') ? 7 : 1;
+
+            const futureDate = new Date(today);
+            futureDate.setDate(futureDate.getDate() + (value * multiplier));
+            return futureDate.toISOString().split('T')[0];
+        }
+
+        // Default to today
+        return today.toISOString().split('T')[0];
+    }
+
+    setupNLPEventListeners() {
+        const parseBtn = document.getElementById('parseNLPBtn');
+        const skipBtn = document.getElementById('skipNLPBtn');
+        const nlpInput = document.getElementById('nlpInput');
+        const nlpField = document.getElementById('nlpInputField');
+        const traditionalFields = document.getElementById('traditionalFormFields');
+
+        // Parse button
+        if (parseBtn) {
+            parseBtn.addEventListener('click', () => {
+                const text = nlpInput.value.trim();
+
+                if (!text) {
+                    this.showNotification('Please enter a description', 'error', 'NLP Parser');
+                    return;
+                }
+
+                // Add parsing animation
+                nlpInput.classList.add('parsing');
+
+                setTimeout(() => {
+                    try {
+                        const parsed = this.parseNaturalLanguage(text);
+
+                        // Fill form fields
+                        document.getElementById('projectName').value = parsed.name;
+                        document.getElementById('projectStart').value = parsed.startDate;
+                        document.getElementById('projectDuration').value = parsed.duration;
+                        document.getElementById('projectProgress').value = parsed.progress;
+                        document.getElementById('progressValue').textContent = parsed.progress + '%';
+                        document.getElementById('projectColor').value = parsed.color;
+
+                        // Show success state
+                        nlpInput.classList.remove('parsing');
+                        nlpInput.classList.add('success');
+
+                        // Show traditional form
+                        nlpField.style.display = 'none';
+                        traditionalFields.style.display = 'block';
+
+                        this.showNotification('Successfully parsed! Review and save.', 'success', 'NLP Parser');
+
+                        // Remove success class after animation
+                        setTimeout(() => {
+                            nlpInput.classList.remove('success');
+                        }, 2000);
+
+                    } catch (error) {
+                        nlpInput.classList.remove('parsing');
+                        nlpInput.classList.add('error');
+                        this.showNotification('Failed to parse. Try using an example format.', 'error', 'NLP Parser');
+
+                        setTimeout(() => {
+                            nlpInput.classList.remove('error');
+                        }, 2000);
+                    }
+                }, 500); // Simulate processing time
+            });
+        }
+
+        // Skip button - show traditional form
+        if (skipBtn) {
+            skipBtn.addEventListener('click', () => {
+                nlpField.style.display = 'none';
+                traditionalFields.style.display = 'block';
+            });
+        }
+
+        // Example tags
+        document.querySelectorAll('.nlp-example-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                nlpInput.value = tag.dataset.example;
+                nlpInput.focus();
+            });
+        });
+    }
+
+    // ===== TEMPLATES & LEARNING =====
+
+    getBuiltInTemplates() {
+        const today = new Date().toISOString().split('T')[0];
+
+        return [
+            {
+                id: 'web-dev',
+                name: 'Web Development Project',
+                icon: '💻',
+                category: 'Development',
+                description: 'Complete web application development with frontend, backend, and deployment phases',
+                tasks: [
+                    { name: 'Requirements Gathering', duration: 5, progress: 0 },
+                    { name: 'UI/UX Design', duration: 7, progress: 0 },
+                    { name: 'Frontend Development', duration: 14, progress: 0 },
+                    { name: 'Backend API Development', duration: 14, progress: 0 },
+                    { name: 'Database Setup', duration: 3, progress: 0 },
+                    { name: 'Integration & Testing', duration: 7, progress: 0 },
+                    { name: 'Deployment & Launch', duration: 3, progress: 0 }
+                ],
+                totalDuration: 53,
+                estimatedDays: 53
+            },
+            {
+                id: 'marketing-campaign',
+                name: 'Marketing Campaign',
+                icon: '📢',
+                category: 'Marketing',
+                description: 'Launch a comprehensive marketing campaign from planning to execution',
+                tasks: [
+                    { name: 'Market Research', duration: 5, progress: 0 },
+                    { name: 'Strategy Development', duration: 3, progress: 0 },
+                    { name: 'Content Creation', duration: 10, progress: 0 },
+                    { name: 'Design Assets', duration: 7, progress: 0 },
+                    { name: 'Campaign Setup', duration: 3, progress: 0 },
+                    { name: 'Launch & Monitor', duration: 14, progress: 0 },
+                    { name: 'Analysis & Reporting', duration: 3, progress: 0 }
+                ],
+                totalDuration: 45,
+                estimatedDays: 45
+            },
+            {
+                id: 'product-launch',
+                name: 'Product Launch',
+                icon: '🚀',
+                category: 'Product',
+                description: 'End-to-end product launch from development to market release',
+                tasks: [
+                    { name: 'Product Development', duration: 30, progress: 0 },
+                    { name: 'Beta Testing', duration: 14, progress: 0 },
+                    { name: 'Marketing Materials', duration: 10, progress: 0 },
+                    { name: 'Pre-launch Campaign', duration: 7, progress: 0 },
+                    { name: 'Launch Event', duration: 1, progress: 0 },
+                    { name: 'Post-launch Support', duration: 14, progress: 0 }
+                ],
+                totalDuration: 76,
+                estimatedDays: 76
+            },
+            {
+                id: 'software-release',
+                name: 'Software Release Cycle',
+                icon: '⚙️',
+                category: 'Development',
+                description: 'Complete software release cycle with development, testing, and deployment',
+                tasks: [
+                    { name: 'Sprint Planning', duration: 2, progress: 0 },
+                    { name: 'Feature Development', duration: 10, progress: 0 },
+                    { name: 'Code Review', duration: 2, progress: 0 },
+                    { name: 'QA Testing', duration: 5, progress: 0 },
+                    { name: 'Bug Fixes', duration: 3, progress: 0 },
+                    { name: 'Release Preparation', duration: 2, progress: 0 },
+                    { name: 'Deployment', duration: 1, progress: 0 }
+                ],
+                totalDuration: 25,
+                estimatedDays: 25
+            },
+            {
+                id: 'event-planning',
+                name: 'Event Planning',
+                icon: '🎉',
+                category: 'Events',
+                description: 'Organize and execute a successful event from concept to completion',
+                tasks: [
+                    { name: 'Concept & Budget', duration: 3, progress: 0 },
+                    { name: 'Venue Booking', duration: 5, progress: 0 },
+                    { name: 'Vendor Coordination', duration: 7, progress: 0 },
+                    { name: 'Marketing & Promotion', duration: 14, progress: 0 },
+                    { name: 'Logistics Planning', duration: 5, progress: 0 },
+                    { name: 'Event Execution', duration: 1, progress: 0 },
+                    { name: 'Post-event Follow-up', duration: 3, progress: 0 }
+                ],
+                totalDuration: 38,
+                estimatedDays: 38
+            },
+            {
+                id: 'content-creation',
+                name: 'Content Creation Series',
+                icon: '✍️',
+                category: 'Content',
+                description: 'Create and publish a series of high-quality content pieces',
+                tasks: [
+                    { name: 'Topic Research', duration: 3, progress: 0 },
+                    { name: 'Content Outline', duration: 2, progress: 0 },
+                    { name: 'Writing & Drafting', duration: 10, progress: 0 },
+                    { name: 'Editing & Review', duration: 5, progress: 0 },
+                    { name: 'Design & Formatting', duration: 3, progress: 0 },
+                    { name: 'SEO Optimization', duration: 2, progress: 0 },
+                    { name: 'Publishing & Promotion', duration: 2, progress: 0 }
+                ],
+                totalDuration: 27,
+                estimatedDays: 27
+            }
+        ];
+    }
+
+    loadCustomTemplates() {
+        const stored = localStorage.getItem('gantt_custom_templates');
+        return stored ? JSON.parse(stored) : [];
+    }
+
+    saveCustomTemplates(templates) {
+        localStorage.setItem('gantt_custom_templates', JSON.stringify(templates));
+    }
+
+    applyTemplate(template) {
+        const startDate = new Date();
+        const project = {
+            id: this.generateId(),
+            name: template.name,
+            startDate: startDate.toISOString().split('T')[0],
+            duration: template.totalDuration || template.estimatedDays,
+            progress: 0,
+            color: '#667eea',
+            description: template.description || '',
+            tasks: []
+        };
+
+        let currentDate = new Date(startDate);
+        template.tasks.forEach((taskTemplate, index) => {
+            const task = {
+                id: this.generateId(),
+                name: taskTemplate.name,
+                startDate: currentDate.toISOString().split('T')[0],
+                duration: taskTemplate.duration,
+                progress: taskTemplate.progress || 0,
+                color: this.getTaskColor(index),
+                description: taskTemplate.description || '',
+                dependencies: []
+            };
+
+            project.tasks.push(task);
+            currentDate.setDate(currentDate.getDate() + taskTemplate.duration);
+        });
+
+        this.projects.push(project);
+        this.saveData();
+        this.render();
+        this.updateStats();
+
+        this.showNotification(`Template "${template.name}" applied successfully!`, 'success', 'Templates');
+        document.getElementById('templatesModal').classList.remove('active');
+    }
+
+    getTaskColor(index) {
+        const colors = ['#667eea', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#feca57'];
+        return colors[index % colors.length];
+    }
+
+    saveCurrentAsTemplate() {
+        if (this.projects.length === 0) {
+            this.showNotification('No projects to save as template', 'error', 'Templates');
+            return;
+        }
+
+        const templateName = prompt('Enter a name for this template:');
+        if (!templateName) return;
+
+        const template = {
+            id: this.generateId(),
+            name: templateName,
+            icon: '📁',
+            category: 'Custom',
+            description: 'Custom template created from your projects',
+            tasks: [],
+            totalDuration: 0,
+            createdAt: new Date().toISOString()
+        };
+
+        this.projects.forEach(project => {
+            if (project.tasks && project.tasks.length > 0) {
+                project.tasks.forEach(task => {
+                    template.tasks.push({
+                        name: task.name,
+                        duration: task.duration,
+                        progress: 0,
+                        description: task.description || ''
+                    });
+                    template.totalDuration += task.duration;
+                });
+            }
+        });
+
+        const customTemplates = this.loadCustomTemplates();
+        customTemplates.push(template);
+        this.saveCustomTemplates(customTemplates);
+
+        this.renderCustomTemplates();
+        this.showNotification('Template saved successfully!', 'success', 'Templates');
+    }
+
+    deleteCustomTemplate(templateId) {
+        if (!confirm('Are you sure you want to delete this template?')) return;
+
+        let customTemplates = this.loadCustomTemplates();
+        customTemplates = customTemplates.filter(t => t.id !== templateId);
+        this.saveCustomTemplates(customTemplates);
+
+        this.renderCustomTemplates();
+        this.showNotification('Template deleted', 'info', 'Templates');
+    }
+
+    generateLearningInsights() {
+        const insights = [];
+
+        // Analyze average task duration by name similarity
+        const taskDurations = {};
+        this.projects.forEach(project => {
+            if (project.tasks) {
+                project.tasks.forEach(task => {
+                    const key = task.name.toLowerCase().trim();
+                    if (!taskDurations[key]) {
+                        taskDurations[key] = [];
+                    }
+                    taskDurations[key].push(task.duration);
+                });
+            }
+        });
+
+        // Find patterns
+        const patterns = Object.entries(taskDurations)
+            .filter(([name, durations]) => durations.length >= 2)
+            .map(([name, durations]) => {
+                const avg = durations.reduce((a, b) => a + b, 0) / durations.length;
+                const min = Math.min(...durations);
+                const max = Math.max(...durations);
+                return { name, avg: Math.round(avg), min, max, count: durations.length };
+            })
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5);
+
+        if (patterns.length > 0) {
+            insights.push({
+                type: 'duration-patterns',
+                title: 'Task Duration Patterns',
+                icon: '⏱️',
+                content: `Based on ${this.projects.length} projects, we've identified common task duration patterns.`,
+                patterns: patterns,
+                recommendations: patterns.map(p =>
+                    `"${p.name}" typically takes ${p.avg} days (range: ${p.min}-${p.max} days)`
+                )
+            });
+        }
+
+        // Analyze project completion rates
+        const completedProjects = this.projects.filter(p => p.progress === 100).length;
+        const inProgressProjects = this.projects.filter(p => p.progress > 0 && p.progress < 100).length;
+        const notStartedProjects = this.projects.filter(p => p.progress === 0).length;
+
+        if (this.projects.length > 0) {
+            insights.push({
+                type: 'completion-stats',
+                title: 'Project Completion Statistics',
+                icon: '📊',
+                content: `You have completed ${completedProjects} out of ${this.projects.length} projects.`,
+                stats: {
+                    completed: completedProjects,
+                    inProgress: inProgressProjects,
+                    notStarted: notStartedProjects,
+                    completionRate: Math.round((completedProjects / this.projects.length) * 100)
+                },
+                recommendations: [
+                    completionRate > 70 ? 'Great job! You have a high completion rate.' : 'Consider breaking down projects into smaller tasks for better completion rates.',
+                    inProgressProjects > 5 ? 'You have many projects in progress. Focus on completing a few before starting new ones.' : 'Good balance of active projects.'
+                ]
+            });
+        }
+
+        // Analyze average project duration
+        if (this.projects.length > 0) {
+            const avgDuration = Math.round(
+                this.projects.reduce((sum, p) => sum + p.duration, 0) / this.projects.length
+            );
+
+            insights.push({
+                type: 'duration-insights',
+                title: 'Project Duration Insights',
+                icon: '📅',
+                content: `Your average project duration is ${avgDuration} days.`,
+                stats: {
+                    avgDuration: avgDuration,
+                    shortestProject: Math.min(...this.projects.map(p => p.duration)),
+                    longestProject: Math.max(...this.projects.map(p => p.duration))
+                },
+                recommendations: [
+                    avgDuration > 60 ? 'Consider breaking long projects into phases for better tracking.' : 'Your project durations are well-sized.',
+                    'Use templates to standardize similar project timelines.'
+                ]
+            });
+        }
+
+        return insights;
+    }
+
+    renderBuiltInTemplates() {
+        const grid = document.getElementById('builtInTemplatesGrid');
+        const templates = this.getBuiltInTemplates();
+
+        grid.innerHTML = templates.map(template => `
+            <div class="template-card" data-template-id="${template.id}">
+                <div class="template-header">
+                    <div class="template-icon">${template.icon}</div>
+                    <span class="template-badge">${template.category}</span>
+                </div>
+                <h4 class="template-title">${template.name}</h4>
+                <p class="template-description">${template.description}</p>
+                <div class="template-meta">
+                    <div class="template-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        ${template.tasks.length} tasks
+                    </div>
+                    <div class="template-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        ${template.estimatedDays} days
+                    </div>
+                </div>
+                <div class="template-actions">
+                    <button class="template-action-btn use-template" data-template-id="${template.id}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Use Template
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        // Attach event listeners
+        grid.querySelectorAll('.use-template').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const templateId = btn.dataset.templateId;
+                const template = templates.find(t => t.id === templateId);
+                if (template) {
+                    this.applyTemplate(template);
+                }
+            });
+        });
+    }
+
+    renderCustomTemplates() {
+        const grid = document.getElementById('customTemplatesGrid');
+        const templates = this.loadCustomTemplates();
+
+        if (templates.length === 0) {
+            grid.innerHTML = `
+                <div class="templates-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    </svg>
+                    <h4>No Custom Templates Yet</h4>
+                    <p>Save your current projects as templates to reuse them later</p>
+                </div>
+            `;
+            return;
+        }
+
+        grid.innerHTML = templates.map(template => `
+            <div class="template-card" data-template-id="${template.id}">
+                <div class="template-header">
+                    <div class="template-icon">${template.icon}</div>
+                    <span class="template-badge">${template.category}</span>
+                </div>
+                <h4 class="template-title">${template.name}</h4>
+                <p class="template-description">${template.description}</p>
+                <div class="template-meta">
+                    <div class="template-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        ${template.tasks.length} tasks
+                    </div>
+                    <div class="template-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        ${template.totalDuration} days
+                    </div>
+                </div>
+                <div class="template-actions">
+                    <button class="template-action-btn use-template" data-template-id="${template.id}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Use
+                    </button>
+                    <button class="template-action-btn delete-template" data-template-id="${template.id}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        // Attach event listeners
+        grid.querySelectorAll('.use-template').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const templateId = btn.dataset.templateId;
+                const template = templates.find(t => t.id === templateId);
+                if (template) {
+                    this.applyTemplate(template);
+                }
+            });
+        });
+
+        grid.querySelectorAll('.delete-template').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const templateId = btn.dataset.templateId;
+                this.deleteCustomTemplate(templateId);
+            });
+        });
+    }
+
+    renderLearningInsights() {
+        const container = document.getElementById('insightsContainer');
+        const insights = this.generateLearningInsights();
+
+        if (insights.length === 0) {
+            container.innerHTML = `
+                <div class="templates-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    <h4>Not Enough Data Yet</h4>
+                    <p>Create more projects to unlock learning insights and recommendations</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = insights.map(insight => {
+            let statsHTML = '';
+            let recommendationsHTML = '';
+
+            if (insight.stats) {
+                statsHTML = `
+                    <div class="insight-stats">
+                        ${Object.entries(insight.stats).map(([key, value]) => `
+                            <div class="insight-stat">
+                                <div class="insight-stat-label">${key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                                <div class="insight-stat-value">${typeof value === 'number' && key.includes('Rate') ? value + '%' : value}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            if (insight.recommendations && insight.recommendations.length > 0) {
+                recommendationsHTML = `
+                    <div class="insight-recommendations">
+                        <h4>💡 Recommendations</h4>
+                        <ul>
+                            ${insight.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <div class="insight-icon">${insight.icon}</div>
+                        <h3 class="insight-title">${insight.title}</h3>
+                    </div>
+                    <p class="insight-content">${insight.content}</p>
+                    ${statsHTML}
+                    ${recommendationsHTML}
+                </div>
+            `;
+        }).join('');
+    }
+
+    setupTemplatesEventListeners() {
+        // Templates button
+        const templatesBtn = document.getElementById('templatesBtn');
+        if (templatesBtn) {
+            templatesBtn.addEventListener('click', () => {
+                document.getElementById('templatesModal').classList.add('active');
+                this.renderBuiltInTemplates();
+                this.renderCustomTemplates();
+                this.renderLearningInsights();
+            });
+        }
+
+        // Close modal
+        const closeBtn = document.getElementById('closeTemplatesModal');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                document.getElementById('templatesModal').classList.remove('active');
+            });
+        }
+
+        // Tab switching
+        document.querySelectorAll('.template-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+
+                // Update active tab
+                document.querySelectorAll('.template-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Update active content
+                document.querySelectorAll('.template-content').forEach(c => c.classList.remove('active'));
+
+                if (tabName === 'built-in') {
+                    document.getElementById('builtInTemplates').classList.add('active');
+                } else if (tabName === 'custom') {
+                    document.getElementById('customTemplates').classList.add('active');
+                    this.renderCustomTemplates();
+                } else if (tabName === 'learned') {
+                    document.getElementById('learningInsights').classList.add('active');
+                    this.renderLearningInsights();
+                }
+            });
+        });
+
+        // Save as template button
+        const saveTemplateBtn = document.getElementById('saveAsTemplateBtn');
+        if (saveTemplateBtn) {
+            saveTemplateBtn.addEventListener('click', () => {
+                this.saveCurrentAsTemplate();
+            });
+        }
+    }
+
+    // ===== CRITICAL PATH HIGHLIGHTING =====
+
+    calculateCriticalPath() {
+        const allTasks = [];
+        const criticalPathData = {
+            tasks: [],
+            duration: 0,
+            count: 0
+        };
+
+        // Collect all tasks from all projects
+        this.projects.forEach(project => {
+            if (project.tasks && project.tasks.length > 0) {
+                project.tasks.forEach(task => {
+                    allTasks.push({
+                        ...task,
+                        projectId: project.id,
+                        projectName: project.name
+                    });
+                });
+            }
+        });
+
+        if (allTasks.length === 0) {
+            return criticalPathData;
+        }
+
+        // Build dependency graph
+        const taskMap = new Map();
+        allTasks.forEach(task => {
+            taskMap.set(task.id, {
+                ...task,
+                earliestStart: 0,
+                earliestFinish: 0,
+                latestStart: Infinity,
+                latestFinish: Infinity,
+                slack: 0,
+                isCritical: false
+            });
+        });
+
+        // Calculate earliest start and finish times (forward pass)
+        const calculateEarliestTimes = () => {
+            let changed = true;
+            while (changed) {
+                changed = false;
+                taskMap.forEach((task, taskId) => {
+                    let maxPredecessorFinish = 0;
+
+                    if (task.dependencies && task.dependencies.length > 0) {
+                        task.dependencies.forEach(depId => {
+                            const predecessor = taskMap.get(depId);
+                            if (predecessor) {
+                                maxPredecessorFinish = Math.max(
+                                    maxPredecessorFinish,
+                                    predecessor.earliestFinish
+                                );
+                            }
+                        });
+                    }
+
+                    const newEarliestStart = maxPredecessorFinish;
+                    const newEarliestFinish = newEarliestStart + task.duration;
+
+                    if (newEarliestStart !== task.earliestStart ||
+                        newEarliestFinish !== task.earliestFinish) {
+                        task.earliestStart = newEarliestStart;
+                        task.earliestFinish = newEarliestFinish;
+                        changed = true;
+                    }
+                });
+            }
+        };
+
+        // Calculate latest start and finish times (backward pass)
+        const calculateLatestTimes = (projectDuration) => {
+            // Initialize latest times for tasks with no successors
+            taskMap.forEach(task => {
+                let hasSuccessors = false;
+                taskMap.forEach(otherTask => {
+                    if (otherTask.dependencies && otherTask.dependencies.includes(task.id)) {
+                        hasSuccessors = true;
+                    }
+                });
+
+                if (!hasSuccessors) {
+                    task.latestFinish = projectDuration;
+                    task.latestStart = task.latestFinish - task.duration;
+                }
+            });
+
+            // Backward pass
+            let changed = true;
+            while (changed) {
+                changed = false;
+                taskMap.forEach((task, taskId) => {
+                    let minSuccessorStart = task.latestFinish;
+
+                    taskMap.forEach(otherTask => {
+                        if (otherTask.dependencies && otherTask.dependencies.includes(taskId)) {
+                            minSuccessorStart = Math.min(
+                                minSuccessorStart,
+                                otherTask.latestStart
+                            );
+                        }
+                    });
+
+                    const newLatestFinish = minSuccessorStart;
+                    const newLatestStart = newLatestFinish - task.duration;
+
+                    if (newLatestFinish !== task.latestFinish ||
+                        newLatestStart !== task.latestStart) {
+                        task.latestFinish = newLatestFinish;
+                        task.latestStart = newLatestStart;
+                        changed = true;
+                    }
+                });
+            }
+        };
+
+        // Calculate times
+        calculateEarliestTimes();
+
+        // Find project duration (maximum earliest finish)
+        let projectDuration = 0;
+        taskMap.forEach(task => {
+            projectDuration = Math.max(projectDuration, task.earliestFinish);
+        });
+
+        calculateLatestTimes(projectDuration);
+
+        // Calculate slack and identify critical tasks
+        const criticalTasks = [];
+        taskMap.forEach((task, taskId) => {
+            task.slack = task.latestStart - task.earliestStart;
+
+            // Tasks with zero or near-zero slack are on the critical path
+            if (task.slack <= 0.01) {
+                task.isCritical = true;
+                criticalTasks.push(taskId);
+            }
+        });
+
+        // If no dependencies exist, find the longest chain by duration
+        if (criticalTasks.length === 0) {
+            // Find tasks with longest duration
+            let maxDuration = 0;
+            allTasks.forEach(task => {
+                maxDuration = Math.max(maxDuration, task.duration);
+            });
+
+            allTasks.forEach(task => {
+                if (task.duration === maxDuration) {
+                    criticalTasks.push(task.id);
+                    const taskData = taskMap.get(task.id);
+                    if (taskData) {
+                        taskData.isCritical = true;
+                    }
+                }
+            });
+        }
+
+        criticalPathData.tasks = criticalTasks;
+        criticalPathData.duration = projectDuration;
+        criticalPathData.count = criticalTasks.length;
+
+        return criticalPathData;
+    }
+
+    toggleCriticalPath() {
+        this.showCriticalPath = !this.showCriticalPath;
+
+        const btn = document.getElementById('toggleCriticalPath');
+        const btnText = document.getElementById('criticalPathBtnText');
+        const info = document.getElementById('criticalPathInfo');
+
+        if (this.showCriticalPath) {
+            // Calculate critical path
+            const criticalPath = this.calculateCriticalPath();
+            this.criticalPathTasks = criticalPath.tasks;
+
+            // Update button
+            btn.classList.add('active');
+            btnText.textContent = 'Hide Critical Path';
+
+            // Show info
+            info.style.display = 'block';
+            document.getElementById('criticalTaskCount').textContent = criticalPath.count;
+            document.getElementById('criticalPathDuration').textContent = `${criticalPath.duration} days`;
+
+            // Show notification
+            this.showNotification(
+                `Critical path identified: ${criticalPath.count} task(s) highlighted`,
+                'success',
+                'Critical Path'
+            );
+        } else {
+            // Hide critical path
+            this.criticalPathTasks = [];
+
+            // Update button
+            btn.classList.remove('active');
+            btnText.textContent = 'Show Critical Path';
+
+            // Hide info
+            info.style.display = 'none';
+        }
+
+        // Re-render to apply/remove highlighting
+        this.render();
+    }
+
+    // ===== COLLAPSIBLE SECTIONS =====
+
+    setupCollapsibleSections() {
+        const collapsibleHeaders = document.querySelectorAll('.intelligence-header.collapsible');
+
+        collapsibleHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const section = header.closest('.intelligence-section');
+                const isCollapsed = section.classList.contains('collapsed');
+
+                if (isCollapsed) {
+                    // Expand
+                    section.classList.remove('collapsed');
+                    header.classList.remove('collapsed');
+                } else {
+                    // Collapse
+                    section.classList.add('collapsed');
+                    header.classList.add('collapsed');
+                }
+
+                // Save state to localStorage
+                const sectionName = header.dataset.section;
+                if (sectionName) {
+                    localStorage.setItem(`section-${sectionName}-collapsed`, !isCollapsed);
+                }
+            });
+
+            // Restore collapsed state from localStorage
+            const sectionName = header.dataset.section;
+            if (sectionName) {
+                const wasCollapsed = localStorage.getItem(`section-${sectionName}-collapsed`) === 'true';
+                if (wasCollapsed) {
+                    const section = header.closest('.intelligence-section');
+                    section.classList.add('collapsed');
+                    header.classList.add('collapsed');
+                }
+            }
+        });
+    }
+
+    setupCriticalPathEventListeners() {
+        const toggleBtn = document.getElementById('toggleCriticalPath');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                this.toggleCriticalPath();
+            });
+        }
+    }
+
+    // ===== HELP MODAL =====
+
+    setupHelpModal() {
+        const helpBtn = document.getElementById('helpBtn');
+        const helpModal = document.getElementById('helpModal');
+        const closeHelpModal = document.getElementById('closeHelpModal');
+
+        if (!helpBtn || !helpModal || !closeHelpModal) {
+            return; // Safety check
+        }
+
+        // Remove any existing listeners by cloning (prevents duplicates)
+        const newHelpBtn = helpBtn.cloneNode(true);
+        helpBtn.parentNode.replaceChild(newHelpBtn, helpBtn);
+
+        // Open help modal
+        newHelpBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            helpModal.classList.add('active');
+        });
+
+        // Close help modal
+        closeHelpModal.addEventListener('click', () => {
+            helpModal.classList.remove('active');
+        });
+
+        // Close on outside click
+        helpModal.addEventListener('click', (e) => {
+            if (e.target === helpModal) {
+                helpModal.classList.remove('active');
+            }
+        });
+
+        // Tab switching for help modal
+        const helpTabs = helpModal.querySelectorAll('.template-tab');
+        helpTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+
+                // Update active tab
+                helpTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Update active content
+                helpModal.querySelectorAll('.template-content').forEach(c => c.classList.remove('active'));
+
+                if (tabName === 'getting-started') {
+                    document.getElementById('gettingStartedContent').classList.add('active');
+                } else if (tabName === 'new-features') {
+                    document.getElementById('newFeaturesContent').classList.add('active');
+                } else if (tabName === 'tips') {
+                    document.getElementById('tipsContent').classList.add('active');
+                }
+            });
+        });
     }
 }
 
