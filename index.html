@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gantt Pro - Project Timeline Manager</title>
+    <link rel="stylesheet" href="styles-fullscreen.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="fullscreen-mode">
+    <div class="app-container fullscreen">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="4" width="4" height="16" rx="1" fill="url(#gradient1)" />
+                        <rect x="10" y="8" width="4" height="12" rx="1" fill="url(#gradient2)" />
+                        <rect x="17" y="6" width="4" height="14" rx="1" fill="url(#gradient3)" />
+                        <defs>
+                            <linearGradient id="gradient1" x1="5" y1="4" x2="5" y2="20" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#667eea" />
+                                <stop offset="1" stop-color="#764ba2" />
+                            </linearGradient>
+                            <linearGradient id="gradient2" x1="12" y1="8" x2="12" y2="20"
+                                gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#f093fb" />
+                                <stop offset="1" stop-color="#f5576c" />
+                            </linearGradient>
+                            <linearGradient id="gradient3" x1="19" y1="6" x2="19" y2="20"
+                                gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#4facfe" />
+                                <stop offset="1" stop-color="#00f2fe" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <h1>Gantt Pro</h1>
+                    <span class="version-badge">v2.0</span>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search projects and tasks..." class="search-input">
+                    <button class="search-clear" id="searchClear" style="display: none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <!-- Filter Dropdown -->
+                <div class="filter-dropdown">
+                    <button class="btn-filter" id="filterBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        Filters
+                        <span class="filter-badge" id="filterBadge" style="display: none;">0</span>
+                    </button>
+                    <div class="filter-menu" id="filterMenu">
+                        <div class="filter-section">
+                            <h4>Progress</h4>
+                            <label><input type="checkbox" class="filter-checkbox" data-filter="progress"
+                                    data-value="0-25"> 0-25%</label>
+                            <label><input type="checkbox" class="filter-checkbox" data-filter="progress"
+                                    data-value="26-50"> 26-50%</label>
+                            <label><input type="checkbox" class="filter-checkbox" data-filter="progress"
+                                    data-value="51-75"> 51-75%</label>
+                            <label><input type="checkbox" class="filter-checkbox" data-filter="progress"
+                                    data-value="76-100"> 76-100%</label>
+                        </div>
+                        <div class="filter-section">
+                            <h4>Status</h4>
+                            <label><input type="checkbox" class="filter-checkbox" data-filter="status"
+                                    data-value="not-started"> Not Started</label>
+                            <label><input type="checkbox" class="filter-checkbox" data-filter="status"
+                                    data-value="in-progress"> In Progress</label>
+                            <label><input type="checkbox" class="filter-checkbox" data-filter="status"
+                                    data-value="completed"> Completed</label>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="btn-text" id="clearFilters">Clear All</button>
+                            <button class="btn-primary-sm" id="applyFilters">Apply</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View Controls -->
+                <div class="view-controls">
+                    <button class="view-btn active" data-view="day">Day</button>
+                    <button class="view-btn" data-view="week">Week</button>
+                    <button class="view-btn" data-view="month">Month</button>
+                    <button class="view-btn" data-view="year">Year</button>
+                </div>
+
+                <!-- Date Range Picker -->
+                <div class="date-range-picker">
+                    <label>Date Range:</label>
+                    <input type="date" id="startDate" class="date-input">
+                    <span class="date-separator">to</span>
+                    <input type="date" id="endDate" class="date-input">
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="header-actions">
+                    <button class="btn-icon" id="exportBtn" title="Export Data">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </button>
+                    <button class="btn-icon" id="importBtn" title="Import Data">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </button>
+                    <button class="btn-icon" id="printBtn" title="Print Chart">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="btn-icon" id="settingsBtn" title="Settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <h2>Projects & Tasks</h2>
+                        <button class="btn-icon-sm" id="toggleSidebar" title="Toggle Sidebar">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                    <button class="btn-primary" id="addProjectBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Project
+                    </button>
+                </div>
+
+                <!-- Project Stats -->
+                <div class="project-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M3 3h18v18H3z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalProjects">0</div>
+                            <div class="stat-label">Projects</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <polyline points="9 11 12 14 22 4"></polyline>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalTasks">0</div>
+                            <div class="stat-label">Tasks</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 6v6l4 2"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="avgProgress">0%</div>
+                            <div class="stat-label">Avg Progress</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Velocity Tracker -->
+                <div class="intelligence-section">
+                    <div class="intelligence-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        <h3>Progress Velocity</h3>
+                    </div>
+                    <div class="velocity-content">
+                        <div class="velocity-stat">
+                            <div class="velocity-label">Completion Rate</div>
+                            <div class="velocity-value" id="completionRate">0 tasks/day</div>
+                        </div>
+                        <div class="velocity-stat">
+                            <div class="velocity-label">Estimated Completion</div>
+                            <div class="velocity-value" id="estimatedCompletion">-</div>
+                        </div>
+                        <div class="velocity-chart">
+                            <canvas id="velocityChart" width="280" height="80"></canvas>
+                        </div>
+                        <div class="velocity-trend">
+                            <span class="trend-indicator" id="trendIndicator">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                </svg>
+                                <span id="trendText">On track</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smart Task Suggestions -->
+                <div class="intelligence-section">
+                    <div class="intelligence-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
+                        <h3>What to Work On Today</h3>
+                    </div>
+                    <div class="suggestions-content" id="smartSuggestions">
+                        <!-- Smart suggestions will be dynamically added here -->
+                    </div>
+                </div>
+
+                <div class="projects-list" id="projectsList">
+                    <!-- Projects will be dynamically added here -->
+                </div>
+            </aside>
+
+            <!-- Floating Sidebar Toggle Button (appears when sidebar is collapsed) -->
+            <button class="sidebar-toggle-floating" id="sidebarToggleFloating" title="Show Projects & Tasks">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+
+            <!-- Gantt Chart Area -->
+            <main class="gantt-area">
+                <!-- Toolbar -->
+                <div class="gantt-toolbar">
+                    <div class="toolbar-left">
+                        <button class="btn-toolbar" id="expandAllBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                            Expand All
+                        </button>
+                        <button class="btn-toolbar" id="collapseAllBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="18 15 12 9 6 15"></polyline>
+                            </svg>
+                            Collapse All
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="btn-toolbar" id="todayBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            Today
+                        </button>
+                    </div>
+                    <div class="toolbar-right">
+                        <div class="zoom-controls">
+                            <button class="btn-toolbar" id="zoomOutBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </button>
+                            <span class="zoom-level" id="zoomLevel">100%</span>
+                            <button class="btn-toolbar" id="zoomInBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="11" y1="8" x2="11" y2="14"></line>
+                                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gantt-container">
+                    <div class="gantt-table">
+                        <table id="ganttTable">
+                            <thead>
+                                <tr>
+                                    <th class="col-project sortable" data-sort="name">
+                                        Project
+                                        <svg class="sort-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </th>
+                                    <th class="col-start sortable" data-sort="startDate">
+                                        Start At
+                                        <svg class="sort-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </th>
+                                    <th class="col-duration sortable" data-sort="duration">
+                                        Duration
+                                        <svg class="sort-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </th>
+                                    <th class="col-progress sortable" data-sort="progress">
+                                        Progress
+                                        <svg class="sort-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </th>
+                                    <th class="col-dependencies">Dependencies</th>
+                                    <th class="col-actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ganttTableBody">
+                                <!-- Table rows will be dynamically added here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="gantt-timeline-wrapper" id="timelineWrapper">
+                        <div class="gantt-timeline-header" id="timelineHeader">
+                            <!-- Timeline header will be dynamically generated -->
+                        </div>
+                        <div class="gantt-timeline" id="ganttTimeline">
+                            <!-- Timeline bars will be dynamically generated -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal for Adding/Editing Project -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="modalTitle">New Project</h3>
+                <button class="modal-close" id="closeModal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="projectForm">
+                    <input type="hidden" id="projectId">
+                    <input type="hidden" id="isTask">
+                    <input type="hidden" id="parentProjectId">
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label for="projectName">Name *</label>
+                            <input type="text" id="projectName" class="form-input" required
+                                placeholder="Enter project or task name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="projectColor">Color</label>
+                            <div class="color-picker-inline">
+                                <input type="color" id="projectColor" class="form-color" value="#667eea">
+                                <div class="color-presets">
+                                    <button type="button" class="color-preset" data-color="#667eea"
+                                        style="background: #667eea;"></button>
+                                    <button type="button" class="color-preset" data-color="#f093fb"
+                                        style="background: #f093fb;"></button>
+                                    <button type="button" class="color-preset" data-color="#4facfe"
+                                        style="background: #4facfe;"></button>
+                                    <button type="button" class="color-preset" data-color="#43e97b"
+                                        style="background: #43e97b;"></button>
+                                    <button type="button" class="color-preset" data-color="#fa709a"
+                                        style="background: #fa709a;"></button>
+                                    <button type="button" class="color-preset" data-color="#feca57"
+                                        style="background: #feca57;"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="projectStart">Start Date *</label>
+                            <input type="date" id="projectStart" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="projectDuration">Duration (days) *</label>
+                            <input type="number" id="projectDuration" class="form-input" min="1" required
+                                placeholder="1">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="projectProgress">Progress (%)</label>
+                            <div class="progress-input-wrapper">
+                                <input type="range" id="projectProgress" class="form-range" min="0" max="100" value="0">
+                                <span class="progress-value" id="progressValue">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectDescription">Description</label>
+                        <textarea id="projectDescription" class="form-textarea" rows="3"
+                            placeholder="Add project description..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectDependencies">Dependencies</label>
+                        <select id="projectDependencies" class="form-select" multiple>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                        <small class="form-hint">Hold Ctrl/Cmd to select multiple dependencies</small>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Export Data</h3>
+                <button class="modal-close" id="closeExportModal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <button class="export-option" id="exportJSON">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        <h4>JSON</h4>
+                        <p>Export as JSON file</p>
+                    </button>
+                    <button class="export-option" id="exportCSV">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <h4>CSV</h4>
+                        <p>Export as CSV file</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Container -->
+    <div class="notifications-container" id="notificationsContainer"></div>
+
+    <!-- Keyboard Shortcuts Help -->
+    <div class="modal" id="shortcutsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Keyboard Shortcuts</h3>
+                <button class="modal-close" id="closeShortcutsModal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="shortcuts-list">
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>N</kbd>
+                        <span>New Project</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>F</kbd>
+                        <span>Search</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>P</kbd>
+                        <span>Print</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>E</kbd>
+                        <span>Export</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>+</kbd>
+                        <span>Zoom In</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>-</kbd>
+                        <span>Zoom Out</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Escape</kbd>
+                        <span>Close Modal</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>?</kbd>
+                        <span>Show Shortcuts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app-fullscreen.js"></script>
+</body>
+
+</html>
