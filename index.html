@@ -150,13 +150,13 @@
                             <rect x="6" y="14" width="12" height="8"></rect>
                         </svg>
                     </button>
-                    <button class="btn-icon" id="settingsBtn" title="Settings">
+                    <!-- <button class="btn-icon" id="settingsBtn" title="Settings">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <circle cx="12" cy="12" r="3"></circle>
                             <path d="M12 1v6m0 6v6m-9-9h6m6 0h6"></path>
                         </svg>
-                    </button>
+                    </button> -->
                     <button class="btn-icon btn-help" id="helpBtn" title="How to Use">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -190,6 +190,14 @@
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
                         Add Project
+                    </button>
+                    <button class="btn-secondary-full" id="addTaskBtnHeader">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Task
                     </button>
                 </div>
 
@@ -225,9 +233,9 @@
                                 <path d="M12 6v6l4 2"></path>
                             </svg>
                         </div>
-                        <div class="stat-info">
+                        <div class="stat-info" title="Average Progress">
                             <div class="stat-value" id="avgProgress">0%</div>
-                            <div class="stat-label">Avg Progress</div>
+                            <div class="stat-label">Progress</div>
                         </div>
                     </div>
                 </div>
@@ -421,6 +429,16 @@
                     <input type="hidden" id="projectId">
                     <input type="hidden" id="isTask">
                     <input type="hidden" id="parentProjectId">
+
+                    <!-- Project Selector (only shown when adding task from header) -->
+                    <div class="form-group" id="projectSelectorField" style="display: none;">
+                        <label for="parentProjectSelector">Project *</label>
+                        <select id="parentProjectSelector" class="form-select">
+                            <option value="">Select a project...</option>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                        <small class="form-hint">Choose which project this task belongs to</small>
+                    </div>
 
                     <div class="form-row">
                         <div class="form-group" style="flex: 2;">
@@ -856,6 +874,35 @@
                                 velocity tracking and completion estimates.</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Selector Modal for Add Task -->
+    <div class="modal" id="projectSelectorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Project for New Task</h3>
+                <button class="modal-close" id="closeProjectSelectorModal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 16px; color: var(--text-secondary);">Choose which project you want to add a
+                    task to:</p>
+                <div class="form-group">
+                    <label for="projectSelector">Project</label>
+                    <select id="projectSelector" class="form-select" size="5">
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelProjectSelector">Cancel</button>
+                    <button type="button" class="btn-primary" id="confirmProjectSelector">Continue</button>
                 </div>
             </div>
         </div>

@@ -55,63 +55,185 @@ A premium Chrome extension for creating and managing Gantt charts with advanced 
 5. Click "Pack Extension"
 6. Install the generated `.crx` file
 
-## 🚀 Usage
+## 📖 How to Use Gantto
 
-### Getting Started
+### Quick Start Guide
 
-1. **Click the Extension Icon** in your Chrome toolbar to open Gantto
+#### 1. Opening Gantto
+- Click the **Gantto extension icon** in your Chrome toolbar
+- The application opens in a new window with a professional dark interface
 
-2. **Add Your First Project**:
-   - Click the "Add Project" button in the sidebar
-   - Fill in project details:
-     - Name
-     - Start Date
-     - Duration (in days)
-     - Progress (0-100%)
-     - Color
-   - Click "Save"
+#### 2. Creating Your First Project
 
-3. **Add Tasks to Projects**:
-   - Click on a project in the sidebar to expand it
-   - Click "Add Task" button
-   - Fill in task details
-   - Click "Save"
+**Step-by-Step:**
+1. Click the **"Add Project"** button in the left sidebar (purple button)
+2. Fill in the project details:
+   - **Name**: Enter your project name (e.g., "Website Redesign")
+   - **Start Date**: Select when the project begins
+   - **Duration**: Enter the number of days (e.g., 30)
+   - **Progress**: Set initial progress (0-100%) - *Note: This auto-calculates from tasks*
+   - **Color**: Choose a color to identify your project
+   - **Description**: Add optional project notes
+3. Click **"Save"** to create the project
 
-### Managing Projects & Tasks
+#### 3. Adding Tasks to Projects
 
-#### Edit Items
-- Click the edit icon (✏️) next to any project or task
-- Modify the details in the modal
-- Click "Save" to update
+**Two Ways to Add Tasks:**
 
-#### Delete Items
-- Click the delete icon (🗑️) next to any project or task
-- Confirm the deletion
+**Method 1: From Sidebar (Recommended)**
+1. Find your project in the left sidebar
+2. Click on the project to expand it
+3. Click the **"Add Task"** button at the top of the task list
+4. Fill in task details and save
 
-#### View Timeline
-- The Gantt chart automatically updates as you add/edit items
-- Bars are color-coded to match their projects
-- Progress is shown as a lighter shade within each bar
+**Method 2: From Header Button**
+1. Click the **"Add Task"** button in the sidebar header (below "Add Project")
+2. Select which project to add the task to from the dropdown
+3. Fill in task details:
+   - **Project**: Select the parent project
+   - **Name**: Enter task name
+   - **Start Date**: Must be within project date range
+   - **Duration**: Number of days (must fit within project)
+   - **Progress**: Set completion percentage (0-100%)
+   - **Color**: Choose task color
+   - **Description**: Add task notes
+4. Click **"Save"**
 
-### Filtering by Date
+**Important Task Rules:**
+- ✅ Task start date must be after or equal to project start date
+- ✅ Task end date must be before or equal to project end date
+- ✅ All tasks combined must fit within the project duration
+- ✅ Project progress is automatically calculated from task progress
 
-1. **Set Date Range**:
-   - Use the date pickers in the top-right header
-   - Select "Start Date" and "End Date"
-   - The timeline automatically updates to show only the selected range
+#### 4. Editing Projects and Tasks
 
-2. **Change View Mode**:
-   - Click Day/Week/Month/Year buttons to change timeline granularity
-   - The timeline header adjusts accordingly
+1. **Edit Icon**: Click the pencil icon (✏️) next to any project or task
+2. **Modify Details**: Update any field in the modal
+3. **Save Changes**: Click "Save" to apply updates
 
-### Printing Charts
+**Note**: When editing projects, the progress field is disabled because it's auto-calculated from tasks.
 
-1. Click the **Print** icon (🖨️) in the header
-2. Your browser's print dialog will open
-3. The chart is automatically formatted for printing:
-   - Sidebar and controls are hidden
-   - Timeline is optimized for paper
-   - Colors are preserved
+#### 5. Deleting Items
+
+1. Click the **trash icon** (🗑️) next to any project or task
+2. Confirm the deletion in the popup
+3. The item is permanently removed
+
+**Warning**: Deleting a project will also delete all its tasks!
+
+#### 6. Using the Gantt Chart Timeline
+
+**Understanding the Timeline:**
+- **Horizontal Bars**: Represent projects and tasks
+- **Bar Color**: Matches the project/task color
+- **Progress Fill**: Lighter shade shows completion percentage
+- **Today Marker**: Vertical line indicates current date
+- **Duration**: Bar width represents the time span
+
+**Viewing Options:**
+- **Day View**: Shows individual days
+- **Week View**: Groups by weeks
+- **Month View**: Shows months
+- **Year View**: Annual overview
+
+#### 7. Filtering and Searching
+
+**Search Projects:**
+1. Use the search box at the top of the sidebar
+2. Type project or task name
+3. Results filter in real-time
+
+**Filter by Progress:**
+1. Click the filter icon in the sidebar
+2. Select progress ranges:
+   - Not Started (0%)
+   - In Progress (1-99%)
+   - Completed (100%)
+3. View is filtered instantly
+
+**Date Range Filtering:**
+1. Use date pickers in the top-right header
+2. Set **Start Date** and **End Date**
+3. Timeline shows only items in that range
+
+#### 8. Viewing Project Statistics
+
+The sidebar shows real-time stats:
+- **Projects**: Total number of projects
+- **Tasks**: Total number of tasks across all projects
+- **Avg Progress**: Average completion across all projects
+
+#### 9. Using Smart Features
+
+**Progress Velocity:**
+- Shows how fast you're completing tasks
+- Displays days per percentage point
+- Helps estimate completion time
+
+**Smart Suggestions:**
+- AI-powered task recommendations
+- Highlights urgent tasks
+- Shows overdue items
+- Suggests next actions
+
+#### 10. Exporting and Sharing
+
+**Export Options:**
+1. Click the **"Export"** button in the header
+2. Choose format:
+   - **JSON**: Full data export
+   - **CSV**: Spreadsheet format
+
+**Share Your Chart:**
+1. Click the **"Share"** button
+2. Options:
+   - **Copy JSON**: Share raw data
+   - **Generate Link**: Create shareable URL
+
+**Print:**
+1. Click the **Print** icon (🖨️)
+2. Browser print dialog opens
+3. Chart is optimized for printing
+
+#### 11. Keyboard Shortcuts
+
+- **Ctrl + N**: Create new project
+- **Ctrl + F**: Focus search box
+- **Ctrl + E**: Open export modal
+- **Ctrl + +**: Zoom in timeline
+- **Ctrl + -**: Zoom out timeline
+- **?**: Show keyboard shortcuts guide
+- **Escape**: Close any open modal
+
+#### 12. Tips for Best Results
+
+✅ **Break Down Projects**: Create multiple small tasks instead of one large task  
+✅ **Update Progress Regularly**: Keep task progress current for accurate project tracking  
+✅ **Use Color Coding**: Assign different colors to categorize projects  
+✅ **Set Realistic Durations**: Ensure task durations are achievable  
+✅ **Use Dependencies**: Link tasks that depend on each other  
+✅ **Check Smart Suggestions**: Review AI recommendations daily  
+✅ **Monitor Velocity**: Track progress velocity to predict completion  
+
+### Advanced Features
+
+#### Task Dependencies
+- Select dependent tasks when creating/editing
+- Visual indicators show task relationships
+- Helps manage complex project workflows
+
+#### Progress Auto-Calculation
+- Project progress = Average of all task progress
+- Updates automatically when tasks change
+- No manual project progress entry needed
+
+#### Data Persistence
+- All data saves automatically
+- Stored locally in Chrome
+- No internet connection required
+- Data persists across sessions
+
+---
 
 ## 🎨 Customization
 
@@ -232,6 +354,78 @@ For issues, questions, or suggestions, please create an issue in the repository.
 
 ---
 
-**Made with ❤️ for project managers and developers**
+## 👨‍💻 Author
+
+### Karthikeyan T
+
+**Full Stack Developer | Project Management Enthusiast**
+
+I'm a passionate developer dedicated to creating tools that make project management easier and more efficient. Gantto was born from my own need for a simple, beautiful, and powerful Gantt chart tool that works right in the browser.
+
+### 📬 Contact Information
+
+- **Name**: Karthikeyan T
+- **Email**: [tkarthikeyan@gmail.com](mailto:tkarthikeyan@gmail.com)
+- **Phone**: +91 [Your Phone Number]
+- **GitHub**: [@tkarthikeyan](https://github.com/tkarthikeyan)
+- **Location**: India
+
+### 🔗 Connect With Me
+
+[![GitHub](https://img.shields.io/badge/GitHub-tkarthikeyan-181717?style=for-the-badge&logo=github)](https://github.com/tkarthikeyan)
+[![Email](https://img.shields.io/badge/Email-tkarthikeyan%40gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:tkarthikeyan@gmail.com)
+
+### 💼 About This Project
+
+Gantto represents my commitment to:
+- **Clean Code**: Well-structured, maintainable JavaScript
+- **User Experience**: Intuitive interfaces that users love
+- **Performance**: Fast, responsive applications
+- **Design**: Beautiful, modern aesthetics
+
+### 🌟 Other Projects
+
+Check out my other work on [GitHub](https://github.com/tkarthikeyan) for more tools and applications.
+
+### 🤝 Let's Collaborate
+
+I'm always open to:
+- **Feedback**: Share your thoughts on Gantto
+- **Feature Requests**: Suggest improvements
+- **Bug Reports**: Help make Gantto better
+- **Contributions**: Submit pull requests
+- **Collaboration**: Work together on new projects
+
+Feel free to reach out via email or GitHub!
+
+---
+
+**Made with ❤️ by Karthikeyan T**
+
+*Empowering project managers and developers with better tools*
 
 Enjoy using Gantto! 🎉
+
+---
+
+### 📝 Version History
+
+**v2.0** (Current)
+- ✨ Added task validation against project duration
+- ✨ Automatic project progress calculation from tasks
+- ✨ Header "Add Task" button with project selector
+- ✨ Smart suggestions and progress velocity
+- ✨ Export and share functionality
+- ✨ Comprehensive keyboard shortcuts
+- ✨ Enhanced UI with guide modal
+
+**v1.0**
+- 🎉 Initial release
+- ✅ Basic project and task management
+- ✅ Gantt chart visualization
+- ✅ Date filtering
+- ✅ Print support
+
+---
+
+© 2024 Karthikeyan T. All rights reserved.

@@ -218,16 +218,21 @@ class GanttProApp {
 
         // Toolbar buttons
         document.getElementById('expandAllBtn').addEventListener('click', () => {
-            document.querySelectorAll('.project-item').forEach(item => {
+            const projectItems = document.querySelectorAll('.project-item');
+            console.log('Expand All clicked, found', projectItems.length, 'projects');
+            projectItems.forEach(item => {
                 item.classList.add('expanded');
             });
         });
 
         document.getElementById('collapseAllBtn').addEventListener('click', () => {
-            document.querySelectorAll('.project-item').forEach(item => {
+            const projectItems = document.querySelectorAll('.project-item');
+            console.log('Collapse All clicked, found', projectItems.length, 'projects');
+            projectItems.forEach(item => {
                 item.classList.remove('expanded');
             });
         });
+
 
         document.getElementById('todayBtn').addEventListener('click', () => {
             const today = new Date();
@@ -274,9 +279,11 @@ class GanttProApp {
             this.importData();
         });
 
-        document.getElementById('settingsBtn').addEventListener('click', () => {
-            document.getElementById('shortcutsModal').classList.add('active');
-        });
+        // Settings button removed from UI
+        // document.getElementById('settingsBtn').addEventListener('click', () => {
+        //     document.getElementById('shortcutsModal').classList.add('active');
+        // });
+
 
         document.getElementById('shareBtn').addEventListener('click', () => {
             document.getElementById('shareModal').classList.add('active');
@@ -286,6 +293,12 @@ class GanttProApp {
         document.getElementById('addProjectBtn').addEventListener('click', () => {
             this.openModal();
         });
+
+        // Add task button in header
+        document.getElementById('addTaskBtnHeader').addEventListener('click', () => {
+            this.showProjectSelectorForTask();
+        });
+
 
         // Modal controls
         document.getElementById('closeModal').addEventListener('click', () => {
@@ -316,6 +329,27 @@ class GanttProApp {
 
         document.getElementById('closeGuideModal').addEventListener('click', () => {
             document.getElementById('guideModal').classList.remove('active');
+        });
+
+        // Project Selector Modal for Add Task
+        document.getElementById('closeProjectSelectorModal').addEventListener('click', () => {
+            document.getElementById('projectSelectorModal').classList.remove('active');
+        });
+
+        document.getElementById('cancelProjectSelector').addEventListener('click', () => {
+            document.getElementById('projectSelectorModal').classList.remove('active');
+        });
+
+        document.getElementById('confirmProjectSelector').addEventListener('click', () => {
+            const selector = document.getElementById('projectSelector');
+            const selectedProjectId = selector.value;
+
+            if (selectedProjectId) {
+                document.getElementById('projectSelectorModal').classList.remove('active');
+                this.openModal(null, true, selectedProjectId);
+            } else {
+                this.showNotification('Please select a project', 'error', 'Add Task');
+            }
         });
 
 
@@ -557,11 +591,29 @@ class GanttProApp {
         const inProgressItems = allItems.filter(item => item.progress > 0 && item.progress < 100);
         const totalItems = allItems.length;
 
-        // Simple velocity calculation (completed items / total days in current month)
+        if (totalItems === 0) {
+            document.getElementById('completionRate').textContent = 'No tasks yet';
+            document.getElementById('estimatedCompletion').textContent = 'Add tasks to see estimates';
+            return;
+        }
+
+        // Improved velocity calculation based on project timeline
         const today = new Date();
-        const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-        const currentDay = today.getDate();
-        const completionRate = currentDay > 0 ? (completedItems.length / currentDay).toFixed(2) : 0;
+
+        // Find the earliest project/task start date
+        let earliestDate = new Date();
+        allItems.forEach(item => {
+            const itemDate = new Date(item.startDate);
+            if (itemDate < earliestDate) {
+                earliestDate = itemDate;
+            }
+        });
+
+        // Calculate days elapsed since project start (minimum 1 day to avoid division by zero)
+        const daysElapsed = Math.max(1, Math.ceil((today - earliestDate) / (1000 * 60 * 60 * 24)));
+
+        // Completion rate: tasks completed per day
+        const completionRate = daysElapsed > 0 ? (completedItems.length / daysElapsed).toFixed(2) : 0;
 
         // Estimated completion date
         const remainingItems = totalItems - completedItems.length;
@@ -578,8 +630,9 @@ class GanttProApp {
         } else if (remainingItems === 0) {
             document.getElementById('estimatedCompletion').textContent = 'All Complete! 🎉';
         } else {
-            document.getElementById('estimatedCompletion').textContent = 'No data yet';
+            document.getElementById('estimatedCompletion').textContent = 'Start completing tasks';
         }
+
 
         // Update trend indicator
         const avgProgress = allItems.reduce((sum, item) => sum + item.progress, 0) / allItems.length;
@@ -926,12 +979,33 @@ class GanttProApp {
         input.click();
     }
 
-    openModal(projectId = null, isTask = false, parentProjectId = null) {
+    openModal(projectId = null, isTask = false, parentProjectId = null, showProjectSelector = false) {
         const modal = document.getElementById('projectModal');
         const form = document.getElementById('projectForm');
+        const progressField = document.getElementById('projectProgress');
+        const progressContainer = progressField.closest('.form-group');
+        const projectSelectorField = document.getElementById('projectSelectorField');
+        const parentProjectSelector = document.getElementById('parentProjectSelector');
 
         form.reset();
         this.populateDependenciesDropdown(projectId);
+
+        // Handle project selector field visibility and population
+        if (showProjectSelector && isTask && !parentProjectId) {
+            // Show and populate project selector
+            projectSelectorField.style.display = 'block';
+            parentProjectSelector.innerHTML = '<option value="">Select a project...</option>';
+
+            this.projects.forEach(project => {
+                const option = document.createElement('option');
+                option.value = project.id;
+                option.textContent = `${project.name} (${project.tasks ? project.tasks.length : 0} tasks)`;
+                parentProjectSelector.appendChild(option);
+            });
+        } else {
+            // Hide project selector
+            projectSelectorField.style.display = 'none';
+        }
 
         if (projectId) {
             const item = this.findItem(projectId);
@@ -966,6 +1040,18 @@ class GanttProApp {
         document.getElementById('isTask').value = isTask;
         document.getElementById('parentProjectId').value = parentProjectId || '';
 
+        // Disable progress field for projects (will be auto-calculated from tasks)
+        // Enable for tasks (can be set manually)
+        if (!isTask) {
+            progressField.disabled = true;
+            progressContainer.style.opacity = '0.6';
+            progressContainer.title = 'Project progress is automatically calculated from its tasks';
+        } else {
+            progressField.disabled = false;
+            progressContainer.style.opacity = '1';
+            progressContainer.title = '';
+        }
+
         modal.classList.add('active');
     }
 
@@ -998,6 +1084,16 @@ class GanttProApp {
         });
     }
 
+    showProjectSelectorForTask() {
+        if (this.projects.length === 0) {
+            this.showNotification('Please create a project first before adding tasks', 'info', 'Add Task');
+            return;
+        }
+
+        // Open the modal as a new task with project selector
+        this.openModal(null, true, null, true); // Pass true as 4th parameter to show project selector
+    }
+
     findItem(id) {
         for (const project of this.projects) {
             if (project.id === id) return project;
@@ -1012,7 +1108,20 @@ class GanttProApp {
     saveProject() {
         const id = document.getElementById('projectId').value;
         const isTask = document.getElementById('isTask').value === 'true';
-        const parentProjectId = document.getElementById('parentProjectId').value;
+        let parentProjectId = document.getElementById('parentProjectId').value;
+
+        // If no parentProjectId is set, check the project selector dropdown
+        // Only validate for NEW tasks (when id is empty)
+        if (isTask && !parentProjectId && !id) {
+            const parentProjectSelector = document.getElementById('parentProjectSelector');
+            parentProjectId = parentProjectSelector.value;
+
+            if (!parentProjectId) {
+                this.showNotification('Please select a project for this task', 'error', 'Validation Error');
+                return;
+            }
+        }
+
 
         const selectedDeps = Array.from(document.getElementById('projectDependencies').selectedOptions)
             .map(opt => opt.value);
@@ -1028,6 +1137,18 @@ class GanttProApp {
             dependencies: selectedDeps
         };
 
+        // Validate task against parent project constraints
+        if (isTask && parentProjectId) {
+            const project = this.projects.find(p => p.id === parentProjectId);
+            if (project) {
+                const validation = this.validateTaskAgainstProject(data, project, id);
+                if (!validation.valid) {
+                    this.showNotification(validation.message, 'error', 'Validation Error');
+                    return;
+                }
+            }
+        }
+
         if (id) {
             this.updateItem(id, data);
         } else {
@@ -1042,6 +1163,9 @@ class GanttProApp {
                 this.projects.push(data);
             }
         }
+
+        // Recalculate project progress from tasks
+        this.recalculateProjectProgress();
 
         this.saveData();
         this.render();
@@ -1065,6 +1189,74 @@ class GanttProApp {
         }
     }
 
+    // Validate that task dates and duration fit within parent project
+    validateTaskAgainstProject(task, project, taskId = null) {
+        const projectStart = new Date(project.startDate);
+        const projectEnd = new Date(projectStart);
+        projectEnd.setDate(projectEnd.getDate() + project.duration - 1);
+
+        const taskStart = new Date(task.startDate);
+        const taskEnd = new Date(taskStart);
+        taskEnd.setDate(taskEnd.getDate() + task.duration - 1);
+
+        // Check if task starts before project
+        if (taskStart < projectStart) {
+            return {
+                valid: false,
+                message: `Task cannot start before project start date (${this.formatDate(project.startDate)})`
+            };
+        }
+
+        // Check if task ends after project
+        if (taskEnd > projectEnd) {
+            return {
+                valid: false,
+                message: `Task end date exceeds project end date (${this.formatDate(projectEnd.toISOString().split('T')[0])}). Adjust task duration or project duration.`
+            };
+        }
+
+        // Check total duration of all tasks doesn't exceed project duration
+        const otherTasks = project.tasks ? project.tasks.filter(t => t.id !== taskId) : [];
+        const allTasks = [...otherTasks, task];
+
+        // Find the earliest task start and latest task end
+        let earliestStart = new Date(task.startDate);
+        let latestEnd = new Date(taskEnd);
+
+        allTasks.forEach(t => {
+            const tStart = new Date(t.startDate);
+            const tEnd = new Date(tStart);
+            tEnd.setDate(tEnd.getDate() + t.duration - 1);
+
+            if (tStart < earliestStart) earliestStart = tStart;
+            if (tEnd > latestEnd) latestEnd = tEnd;
+        });
+
+        // Calculate total span needed for all tasks
+        const totalSpanDays = Math.ceil((latestEnd - earliestStart) / (1000 * 60 * 60 * 24)) + 1;
+
+        if (totalSpanDays > project.duration) {
+            return {
+                valid: false,
+                message: `All tasks combined require ${totalSpanDays} days, but project duration is only ${project.duration} days. Please adjust task dates or increase project duration.`
+            };
+        }
+
+        return { valid: true };
+    }
+
+    // Automatically calculate project progress from its tasks
+    recalculateProjectProgress() {
+        this.projects.forEach(project => {
+            if (project.tasks && project.tasks.length > 0) {
+                // Calculate average progress of all tasks
+                const totalProgress = project.tasks.reduce((sum, task) => sum + task.progress, 0);
+                project.progress = Math.round(totalProgress / project.tasks.length);
+            }
+            // If project has no tasks, keep its current progress (manual entry allowed)
+        });
+    }
+
     deleteItem(id) {
         if (!confirm('Are you sure you want to delete this item?')) return;
 
@@ -1082,6 +1274,9 @@ class GanttProApp {
                 }
             }
         }
+
+        // Recalculate project progress after deletion
+        this.recalculateProjectProgress();
 
         this.saveData();
         this.render();
@@ -1142,6 +1337,13 @@ class GanttProApp {
         </div>
         ${project.tasks && project.tasks.length > 0 ? `
           <div class="task-list">
+            <button class="add-task-btn" data-project-id="${project.id}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Task
+            </button>
             ${project.tasks.map(task => `
               <div class="task-item" style="border-left-color: ${task.color};">
                 <div class="task-info">
@@ -1164,13 +1366,6 @@ class GanttProApp {
                 </div>
               </div>
             `).join('')}
-            <button class="add-task-btn" data-project-id="${project.id}">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Add Task
-            </button>
           </div>
         ` : `
           <div class="task-list">
@@ -1404,9 +1599,37 @@ class GanttProApp {
         const firstDate = dates[0];
         const cellWidth = 60;
 
-        const daysDiff = Math.floor((startDate - firstDate) / (1000 * 60 * 60 * 24));
+        let daysDiff, durationInUnits;
+
+        switch (this.currentView) {
+            case 'day':
+                daysDiff = Math.floor((startDate - firstDate) / (1000 * 60 * 60 * 24));
+                durationInUnits = item.duration;
+                break;
+
+            case 'week':
+                daysDiff = Math.floor((startDate - firstDate) / (1000 * 60 * 60 * 24 * 7));
+                durationInUnits = Math.ceil(item.duration / 7);
+                break;
+
+            case 'month':
+                daysDiff = (startDate.getFullYear() - firstDate.getFullYear()) * 12 +
+                    (startDate.getMonth() - firstDate.getMonth());
+                durationInUnits = Math.ceil(item.duration / 30);
+                break;
+
+            case 'year':
+                daysDiff = startDate.getFullYear() - firstDate.getFullYear();
+                durationInUnits = Math.ceil(item.duration / 365);
+                break;
+
+            default:
+                daysDiff = Math.floor((startDate - firstDate) / (1000 * 60 * 60 * 24));
+                durationInUnits = item.duration;
+        }
+
         const left = daysDiff * cellWidth;
-        const width = item.duration * cellWidth;
+        const width = Math.max(durationInUnits * cellWidth, cellWidth); // Minimum one cell width
 
         const gridCells = dates.map(date => {
             const isToday = date.getTime() === today.getTime();
@@ -1428,9 +1651,49 @@ class GanttProApp {
         const dates = [];
         const current = new Date(this.startDate);
 
-        while (current <= this.endDate) {
-            dates.push(new Date(current));
-            current.setDate(current.getDate() + 1);
+        switch (this.currentView) {
+            case 'day':
+                // Show each day
+                while (current <= this.endDate) {
+                    dates.push(new Date(current));
+                    current.setDate(current.getDate() + 1);
+                }
+                break;
+
+            case 'week':
+                // Show start of each week
+                // Move to the start of the week (Sunday)
+                current.setDate(current.getDate() - current.getDay());
+                while (current <= this.endDate) {
+                    dates.push(new Date(current));
+                    current.setDate(current.getDate() + 7);
+                }
+                break;
+
+            case 'month':
+                // Show start of each month
+                current.setDate(1); // Move to first day of month
+                while (current <= this.endDate) {
+                    dates.push(new Date(current));
+                    current.setMonth(current.getMonth() + 1);
+                }
+                break;
+
+            case 'year':
+                // Show start of each year
+                current.setMonth(0, 1); // Move to January 1st
+                while (current <= this.endDate) {
+                    dates.push(new Date(current));
+                    current.setFullYear(current.getFullYear() + 1);
+                }
+                break;
+
+            default:
+                // Default to day view
+                while (current <= this.endDate) {
+                    dates.push(new Date(current));
+                    current.setDate(current.getDate() + 1);
+                }
         }
 
         return dates;
