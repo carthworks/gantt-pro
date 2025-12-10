@@ -2189,6 +2189,36 @@ body.fullscreen-mode {
   font-weight: 600;
 }
 
+/* Guide Intro Section */
+.guide-intro {
+  text-align: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.guide-main-title {
+  font-size: 24px;
+  font-weight: 700;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 12px 0;
+  line-height: 1.3;
+}
+
+.guide-description {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
 /* Developer Section Styles */
 .developer-info {
   margin-top: 16px;
@@ -2318,13 +2348,72 @@ body.fullscreen-mode {
 
 /* Responsive adjustments for guide modal */
 @media (max-width: 768px) {
-  .guide-features {
-    grid-template-columns: 1fr;
+
+  /* Guide Modal */
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
+    margin: 20px auto;
   }
 
+  .guide-content {
+    padding: 16px;
+  }
+
+  /* Guide Intro */
+  .guide-main-title {
+    font-size: 20px;
+  }
+
+  .guide-description {
+    font-size: 14px;
+  }
+
+  /* Guide Sections */
+  .guide-section {
+    margin-bottom: 24px;
+  }
+
+  .guide-section h3 {
+    font-size: 16px;
+  }
+
+  .guide-features {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .guide-steps {
+    gap: 12px;
+  }
+
+  .step-number {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .step-content h5 {
+    font-size: 14px;
+  }
+
+  .step-content p {
+    font-size: 13px;
+  }
+
+  /* Developer Section */
   .developer-header {
     flex-direction: column;
     text-align: center;
+  }
+
+  .developer-avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .developer-details h4 {
+    font-size: 16px;
   }
 
   .developer-contacts {
@@ -2334,5 +2423,90 @@ body.fullscreen-mode {
   .contact-link {
     font-size: 13px;
     padding: 8px 10px;
+  }
+
+  /* Shortcuts */
+  .shortcuts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Tips */
+  .tips-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Extra small devices (phones in portrait) */
+@media (max-width: 480px) {
+  .modal-content {
+    width: 100%;
+    max-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .modal-header h3 {
+    font-size: 18px;
+  }
+
+  .guide-main-title {
+    font-size: 18px;
+  }
+
+  .guide-description {
+    font-size: 13px;
+  }
+
+  .guide-section h3 {
+    font-size: 15px;
+  }
+
+  .developer-card {
+    padding: 16px;
+  }
+
+  .developer-avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .contact-link {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  .contact-link svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Landscape phones and small tablets */
+@media (max-width: 768px) and (orientation: landscape) {
+  .modal-content {
+    max-height: 95vh;
+  }
+
+  .guide-content {
+    max-height: calc(95vh - 120px);
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .contact-link {
+    min-height: 44px;
+    /* Touch-friendly size */
+  }
+
+  .btn-toolbar,
+  .action-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .modal-close {
+    width: 44px;
+    height: 44px;
   }
 }
